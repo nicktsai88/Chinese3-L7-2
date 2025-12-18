@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>張釋之執法 - 互動學習 App (全方位題庫版)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        }
+    }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-bounce-subtle {
+            animation: bounceSubtle 2s infinite;
+        }
+
+        .animate-confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounceSubtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            BookOpen, PenTool, History, Heart, AlertCircle, CheckCircle, XCircle, 
+            ChevronRight, LogOut, User, ArrowLeft, Zap, Volume2, Home, LayoutGrid, 
+            Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, Download, ImageOff,
+            Gavel, Scale, FileText, List
+        } from 'lucide-react';
+
+        // --- API Key Configuration ---
+        const apiKey = ""; 
+
+        // --- Helper: Convert PNG Data URL to JPG Data URL ---
+        const convertPngToJpg = (pngDataUrl) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const jpgDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    resolve(jpgDataUrl);
+                };
+                img.onerror = reject;
+                img.src = pngDataUrl;
+            });
+        };
+
+        // --- API Helper for Image Generation ---
+        const generateAIImage = async (prompt) => {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+            const enhancedPrompt = prompt + ", masterpiece, best quality, ancient Chinese ink wash painting style, traditional art, watercolor texture, ethereal, historical atmosphere, Han Dynasty style";
+
+            const payload = {
+                instances: [ { prompt: enhancedPrompt } ],
+                parameters: { sampleCount: 1, aspectRatio: "4:3" }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                const base64Image = result.predictions?.[0]?.bytesBase64Encoded;
+                
+                if (base64Image) {
+                    const pngDataUrl = `data:image/png;base64,${base64Image}`;
+                    const jpgDataUrl = await convertPngToJpg(pngDataUrl);
+                    return jpgDataUrl;
+                } else {
+                    throw new Error("No image data in response");
+                }
+            } catch (error) {
+                console.error("Image generation error:", error);
+                alert("圖片生成失敗，請稍後再試。");
+                return null;
+            }
+        };
+
+        // --- LocalStorage Database Helper ---
+        const STORAGE_KEYS = {
+            USER: 'learning_app_user_v2', 
+            HISTORY: 'learning_app_history_v2',
+            MISTAKES: 'learning_app_mistakes_v2',
+            FAVORITES: 'learning_app_favorites_v2'
+        };
+
+        const LocalDB = {
+            getUser: () => {
+                const data = localStorage.getItem(STORAGE_KEYS.USER);
+                return data ? JSON.parse(data) : null;
+            },
+            saveUser: (name) => {
+                const user = { uid: 'local-user', displayName: name, lastLogin: new Date().toISOString() };
+                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+                return user;
+            },
+            clearUser: () => {
+                localStorage.removeItem(STORAGE_KEYS.USER);
+            },
+            getHistory: () => {
+                const data = localStorage.getItem(STORAGE_KEYS.HISTORY);
+                return data ? JSON.parse(data) : [];
+            },
+            addHistory: (record) => {
+                const list = LocalDB.getHistory();
+                const newRecord = { ...record, id: Date.now().toString(), date: new Date().toISOString() };
+                list.unshift(newRecord); 
+                localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(list));
+                return newRecord;
+            },
+            getMistakes: () => {
+                const data = localStorage.getItem(STORAGE_KEYS.MISTAKES);
+                return data ? JSON.parse(data) : [];
+            },
+            addMistake: (mistake) => {
+                const list = LocalDB.getMistakes();
+                const exists = list.some(item => item.id === mistake.id);
+                if (!exists) {
+                    const newMistake = { ...mistake, timestamp: new Date().toISOString() };
+                    list.unshift(newMistake);
+                    localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(list));
+                }
+            },
+            removeMistake: (id) => {
+                const list = LocalDB.getMistakes().filter(item => item.id.toString() !== id.toString());
+                localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(list));
+            },
+            getFavorites: () => {
+                const data = localStorage.getItem(STORAGE_KEYS.FAVORITES);
+                return data ? new Set(JSON.parse(data)) : new Set();
+            },
+            toggleFavorite: (id) => {
+                const favs = LocalDB.getFavorites();
+                const idStr = id.toString();
+                if (favs.has(idStr)) {
+                    favs.delete(idStr);
+                } else {
+                    favs.add(idStr);
+                }
+                localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(Array.from(favs)));
+                return favs;
+            },
+            removeFavorite: (id) => {
+                const favs = LocalDB.getFavorites();
+                favs.delete(id.toString());
+                localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(Array.from(favs)));
+            }
+        };
+        
+        // --- Global Data Definitions ---
+        const STUDY_CONTENT = {
+            intro: {
+                title: "形音義補充與辨析",
+                bian_words: [
+                    { word: "辯 (ㄅㄧㄢˋ)", type: "動", mean: "爭論是非曲直。如：辯駁。", type2: "名", mean2: "能言善道的。如：辯才無礙。" },
+                    { word: "辨 (ㄅㄧㄢˋ)", type: "動", mean: "分別、判別。如：明辨是非。" },
+                    { word: "辮 (ㄅㄧㄢˋ)", type: "名", mean: "分股編成的條狀物。如：綁辮子。" },
+                    { word: "辦 (ㄅㄢˋ)", type: "動", mean: "1. 處理 (如：公事公辦)。 2. 創設、經營 (如：創辦學校)。 3. 懲罰、治罪 (如：革職查辦)。" },
+                    { word: "瓣 (ㄅㄢˋ)", type: "名", mean: "花片。如：玫瑰花瓣。" }
+                ],
+                notes: [
+                    { char: "輿", means: ["(名) 車子。如：車輿、乘輿。", "(名) 轎子。如：竹輿、輕輿(卻上輕輿趁晚涼)。", "(名) 公眾的。如：輿論、輿情。"] },
+                    { char: "屬", means: ["(ㄓㄨˇ) (動) 交付，通「囑」。如：屬之廷尉。", "(ㄕㄨˇ) ①(動) 附著、歸於(如：附屬)。②(名) 親眷(如：親屬、眷屬)。③(名) 部下(如：部屬、下屬)。"] },
+                    { char: "囑 (ㄓㄨˇ)", means: ["(動) 叮嚀、託付。如：叮囑、囑咐。"] },
+                    { char: "矚 (ㄓㄨˇ)", means: ["(動) 注視。如：眾所矚目、高瞻遠矚(見識遠大)。"] },
+                    { char: "乃", means: ["(副) 竟、居然。如：廷尉乃當之罰金！", "(動) 是。如：失敗乃成功之母。", "(代) 你、你的。如：家祭無忘告乃翁 (語出南宋詩人陸游示兒，意思是「當宋朝軍隊收復中原失地的那一天，你們舉行家祭時，千萬不要忘記把這個好消息告訴我（你們的父親）！」)。"] }
+                ]
+            },
+            grammar: {
+                title: "字義整理、詞語注釋與辨析",
+                table: [
+                    { char: "為", sent: "釋之「為」廷尉", mean: "當、擔任 (動詞)", image: "images/grammar_wei1.jpg", prompt: "Ancient Chinese official sitting at a desk, wearing Han Dynasty robes, acting as a judge" },
+                    { char: "為", sent: "一傾而天下用法皆「為」輕重", mean: "因為 (介詞)", image: "images/grammar_wei2.jpg", prompt: "Ancient Chinese scales tipping to one side, symbolizing unfair law enforcement, ink wash style" },
+                    { char: "行", sent: "上「行」，出中渭橋", mean: "出巡 (動詞)", image: "images/grammar_xing1.jpg", prompt: "Ancient Chinese Emperor's carriage procession crossing a stone bridge, historical scene" },
+                    { char: "行", sent: "以為「行」已過", mean: "隊伍 (名詞)", image: "images/grammar_xing2.jpg", prompt: "A group of ancient Chinese cavalry soldiers and carriages moving in a line" },
+                    { char: "下", sent: "從橋「下」走出 / 匿橋「下」", mean: "低處、底部 (名詞)", image: "images/grammar_xia1.jpg", prompt: "A person hiding in the shadows under an ancient stone bridge arch" },
+                    { char: "下", sent: "今既「下」廷尉", mean: "上位者交付任務給下位者 (動詞)", image: "images/grammar_xia2.jpg", prompt: "Emperor handing a bamboo scroll document to a kneeling official" },
+                    { char: "使", sent: "於是「使」騎捕", mean: "派遣 (動詞) *另有一說，解釋為「派人」，作「動詞」用。", image: "images/grammar_shi1.jpg", prompt: "An official commanding a cavalry soldier to ride fast and catch someone" },
+                    { char: "使", sent: "上「使」立誅之則已", mean: "假使 (連詞)", image: "images/grammar_shi2.jpg", prompt: "An abstract scene of an execution order, ancient Chinese style" },
+                    { char: "之", sent: "久「之」，以為行已過", mean: "無義 (助詞)", prompt: "A sandglass or sundial representing the passage of time, ancient style" },
+                    { char: "之", sent: "而廷尉乃當「之」罰金 / 屬「之」廷尉 / 上使立誅「之」則已", mean: "指縣人/人犯 (代詞)", prompt: "A commoner kneeling in an ancient court, being pointed at" },
+                    { char: "之", sent: "今法如此而更重「之」", mean: "指罪 (代詞)", prompt: "Heavy weights being added to a scale, symbolizing heavier punishment" },
+                    { char: "之", sent: "廷尉，天下「之」平也", mean: "的 (助詞) *教育部重編國語辭典修訂本將「之」解釋為「的」，作介詞用。", prompt: "A balanced scale representing justice and fairness for the whole world" },
+                    { char: "之", sent: "唯陛下察「之」", mean: "指犯罪的事 (代詞)", prompt: "An official presenting a case report to the Emperor" },
+                    { char: "當", sent: "人犯蹕，「當」罰金", mean: "判處 (動詞) *另有一說，解釋為「應當」，作「副詞」用。", image: "images/grammar_dang1.jpg", prompt: "A judge writing a verdict of fine on a bamboo slip" },
+                    { char: "當", sent: "廷尉乃「當」之罰金", mean: "判處 (動詞)", image: "images/grammar_dang2.jpg", prompt: "An official announcing a sentence in court" }, 
+                    { char: "當", sent: "奏「當」 / 廷尉「當」是也", mean: "判決/判決的結果 (名詞)", prompt: "A formal judgment document scroll" },
+                    { char: "當", sent: "「當」是也 / 「當」省則省", mean: "應該、應當 (副詞)", prompt: "A checkmark or symbol of correctness in ancient calligraphy style" },
+                    { char: "是", sent: "「是」法不信於民也", mean: "此、這 (代詞) *另有一說將「是」作為「指示形容詞」，用來形容「法」。", image: "images/grammar_shi_this.jpg", prompt: "An official pointing at a law code displayed to the public" },
+                    { char: "是", sent: "廷尉當「是」也", mean: "正確的 (形容詞)", image: "images/grammar_shi_correct.jpg", prompt: "Emperor nodding in agreement with an official" },
+                    { char: "是", sent: "「是」可忍，孰不可忍", mean: "此、這 (代詞) *(如果這都可以容忍，那還有什麼是無法容忍的。表示對某事已忍無可忍。)", prompt: "An angry person expressing intolerance" },
+                    { char: "唯", sent: "「唯」陛下察之", mean: "希望 (副詞)", prompt: "An official bowing deeply with hope and respect" },
+                    { char: "唯", sent: "「唯」利是圖", mean: "獨、只有 (副詞)", prompt: "A person greedily looking at gold coins, ignoring everything else" },
+                    { char: "親", sent: "此人「親」驚吾馬", mean: "親自 (副詞)", image: "images/grammar_qin1.jpg", prompt: "A person accidentally scaring a horse by running out" },
+                    { char: "親", sent: "人人「親」其親，長其長，則天下平。", mean: "親愛 (動詞) *(每個人都愛自己的親人，尊重自己的長輩，那天下就會安寧。)", image: "images/grammar_qin2.jpg", prompt: "Family members showing love and respect to elders" }
+                ],
+                vocab: [
+                    { text: "於是使「騎」捕", mean: "騎兵 (名詞)", prompt: "Han Dynasty cavalry soldier on horse" },
+                    { text: "「匿」橋下", mean: "隱藏 (動詞)", prompt: "Person hiding under a bridge" },
+                    { text: "「即」出 / 「即」走耳", mean: "便、就 (副詞)", prompt: "Action happening immediately" },
+                    { text: "即走「耳」", mean: "矣、了 (助詞)", prompt: "A finality particle symbol" },
+                    { text: "法「者」", mean: "助詞，用於句中，表示停頓。", prompt: "A pause symbol in text" },
+                    { text: "如此「而」更重之", mean: "卻 (連詞)。亦可作「假如」。", prompt: "Contrast symbol" },
+                    { text: "更「重」之", mean: "加重 (動詞)", prompt: "Adding weights to a scale" },
+                    { text: "「良」久", mean: "很、甚、極 (副詞)", prompt: "Long time passing" },
+                    { text: "一傾而「天下」用法...", mean: "指天下執行法律者 (名詞)", prompt: "Group of judges and officials" },
+                    { text: "用法皆為輕重", mean: "原句「用法皆為之輕重」，省略「之」字，指執法偏斜不正。", prompt: "Tilted scales of justice" }
+                ],
+                phrases: [
+                    { title: "「走」字辨析", content: "見乘輿車騎即「走」耳：奔跑，動詞。 / 販夫「走」卒：走動的，形容詞。(「販夫」指做小買賣的人，「走卒」指替人跑腿或當差的小吏。販夫走卒指生活在下層的老百姓。)", prompt: "A person running away fast vs a street vendor walking slowly" },
+                    { title: "被動句 (介詞「於」)", content: "是法不信「於」民也：被。【被動句】 / 先發制人，後發制「於」人：被。【被動句】 / 己所不欲，勿施「於」人：給。 / 千里之行，始「於」足下：從、自。 / 蜀道難，難「於」上青天：比。", prompt: "People looking doubtfully at a law bulletin board" },
+                    { title: "被動句 (「為」)", content: "二蟲盡「為」所吞：被。【被動句】", prompt: "A toad being swallowed by a snake, nature scene" }
+                ]
+            },
+            structure: {
+                title: "課文結構表",
+                stages: [
+                    { name: "1. 案情 (第一至二段)", desc: "皇帝出巡 —— 路人驚動皇帝座車。犯人口供 —— 犯蹕乃無心之過。張釋之判決 —— 當罰金。", image: "images/structure_1.jpg", prompt: "Han Dynasty Emperor's carriage, a commoner scaring the horses, chaotic scene" },
+                    { name: "2. 皇帝反應 (第三段)", desc: "對判決不滿而發怒，認為罪當加重。", image: "images/structure_2.jpg", prompt: "Angry Chinese Emperor shouting at an official in the palace" },
+                    { name: "3. 張釋之據理力爭", desc: "法律之前，人人平等。執法者皆須依法公正判決。", image: "images/structure_3.jpg", prompt: "Calm official holding a bamboo scroll, bowing but standing firm before the angry Emperor" },
+                    { name: "4. 結果 (第四段)", desc: "漢文帝從善如流 —— 認同張釋之的判決。", image: "images/structure_4.jpg", prompt: "Emperor calming down and nodding to the official, peaceful atmosphere" }
+                ],
+                exam: {
+                    text: "「少了史記，這個歷史會少掉多少故事？會少掉多少可歌可泣的人物？而那在韓信落魄時給他一碗飯吃的漂母，使我不敢小看在河邊漂洗衣服的無名女人。那和屈原對話的漁父，也使我相信捕魚人中有大智若愚的隱者。史記書寫了主流價值之外的另一種信仰。」",
+                    question: "根據這段文字，下列何者最符合作者對史記的看法？",
+                    options: ["(A) 呈現市井小民在歷史上的意義", "(B) 描寫史事詳盡，考證鉅細靡遺", "(C) 透過平凡人物襯托主角的不凡", "(D) 顛覆大智若愚的傳統主流價值"],
+                    answer: "(A) 呈現市井小民在歷史上的意義 (108會考)"
+                }
+            },
+            idioms: {
+                title: "出自史記的成語",
+                items: [
+                    { name: "吐哺握髮", mean: "原指熱情接待賢士。後用以形容求賢若渴。", source: "語出《史記・魯周公世家》：「周公戒伯禽曰：『我於天下亦不賤矣。然我一沐三握髮，一飯三吐哺，起以待士，猶恐失天下之賢人。』」", prompt: "Ancient duke spitting out food and holding hair to rush out and greet a guest" },
+                    { name: "利令智昏", mean: "形容因貪利而失去了理智，是非不辨。", source: "語出《史記・平原君虞卿列傳》：「太史公曰：平原君，翩翩濁世之佳公子也，然未睹大體。鄙語曰：『利令智昏』………………。」", prompt: "A person blinded by gold coins, looking confused and foolish" },
+                    { name: "助紂為虐", mean: "比喻幫助壞人做壞事。", source: "語出《史記・留侯世家》：「今始入秦，即安其樂，此所謂助桀為虐。」", prompt: "A wicked tyrant on a throne with an evil advisor whispering to him" },
+                    { name: "肝腦塗地", mean: "原指死得很慘，後來也指甘作一切犧牲來報答別人的恩德或表示忠誠。", source: "語出《史記・劉敬叔孫通列傳》：「大戰七十，小戰四十，使天下之民肝腦塗地。」", prompt: "A loyal soldier kneeling down, pledging absolute loyalty" },
+                    { name: "奇貨可居", mean: "比喻仗持某種專長或有利用價值的東西作為資本以謀利。", source: "語出《史記・呂不韋列傳》：「子楚，秦諸庶孽孫，質於諸侯，車乘進用不饒，居處困，不得意。呂不韋賈邯鄲，見而憐之，曰：『此奇貨可居。』」", prompt: "A merchant looking at a valuable object with a scheming smile" },
+                    { name: "背水一戰", mean: "比喻決一死戰。", source: "語出《史記・淮陰侯列傳》：「(韓)信乃使萬人先行，出，背水陣。………………軍皆殊死戰，不可敗。」", prompt: "Soldiers with a river behind them, fighting desperately against enemies in front" },
+                    { name: "韋編三絕", mean: "指勤奮讀書。", source: "語出《史記・孔子世家》：「孔子晚而喜易………………讀易，韋編三絕。」", prompt: "Confucius reading bamboo scrolls so many times the leather binding breaks" },
+                    { name: "人為刀俎，我為魚肉", mean: "比喻自己受制於人，處於任人擺弄的境況。俎，割肉用的砧板。", source: "語出《史記・項羽本紀》：「樊噲曰：『大行不顧細謹，大禮不辭小讓。如今人方為刀俎，我為魚肉，何辭為！』」", prompt: "Fish and meat on a chopping board, knife looming above" },
+                    { name: "破釜沉舟", mean: "今多用以形容一往直前、視死如歸、義無反顧的精神。", source: "語出《史記・項羽本紀》：「乃悉引兵渡河，皆沉船，破釜甑，燒廬舍，持三日糧，以示士卒必死，無一還心。」", prompt: "Soldiers smashing cooking pots and sinking boats after crossing a river" },
+                    { name: "三令五申", mean: "再三叮嚀告誡。", source: "語出《史記・孫子吳起列傳》：「約束既布，乃設鉄鉞，即三令五申之。」(鉄鉞，刑具，比喻刑戮。)", prompt: "General giving strict orders to troops multiple times" },
+                    { name: "約法三章", mean: "漢高祖劉邦初入咸陽，臨時制定三條法律，與民共守。泛指事先約好或規定的事。", source: "語出《史記・高祖本紀》：「與父老約，法三章耳：殺人者死，傷人及盜抵罪。」", prompt: "Liu Bang entering city and announcing three simple laws to the elders" },
+                    { name: "一諾千金", mean: "形容承諾信用高，一旦許諾別人，必定做到。", source: "語本《史記・季布傳》：「楚人諺曰：『得黃金百斤，不如得季布一諾。』」", prompt: "A pile of gold next to a person making a promise gesture" },
+                    { name: "一決雌雄", mean: "比喻互相較量以決定勝敗、高下。", source: "語本《史記・項羽本紀》：「天下匈匈數歲者，徒以吾兩人耳，願與漢王挑戰，決雌雄，毋徒苦天下之民父子為也。」", prompt: "Two powerful generals facing off for a duel" },
+                    { name: "雞鳴狗盜", mean: "比喻有某種卑下技能的人，或指卑微的技能。", source: "典出《史記・孟嘗君列傳》：戰國時秦昭王囚孟嘗君，打算加以殺害。孟嘗君的門客，一個裝狗入秦宮偷狐白裘，另一個學雞叫使函谷關關門早開，孟嘗君因此而脫難。", prompt: "One person imitating a rooster crowing, another sneaking like a dog" },
+                    { name: "毛遂自荐", mean: "比喻自告奮勇，自我推荐。", source: "典出《史記・平原君虞卿列傳》：戰國時，秦兵圍攻趙國，平原君至楚求救，其門下食客毛遂自荐前往，並說服楚王同意趙楚合縱。", prompt: "A man stepping forward from a crowd to volunteer for a task" }
+                ]
+            },
+            law: {
+                title: "法律相關成語與名言",
+                idioms: [
+                    { text: "(一) 嚴刑峻法", mean: "嚴厲的刑法。", prompt: "Strict and severe ancient Chinese law court with punishment tools" },
+                    { text: "(二) 繩之以法", mean: "指以法律制裁罪犯。", prompt: "Criminal being bound by ropes of law" },
+                    { text: "(三) 貪贓枉法", mean: "指貪汙受賄，破壞法紀。", prompt: "Corrupt official accepting a bag of gold secretly" },
+                    { text: "(四) 就地正法", mean: "在犯罪所在地執行死刑。", prompt: "Immediate execution of justice at the crime scene, historical style" },
+                    { text: "(五) 目無法紀", mean: "膽大妄為，無視於法律的存在。", prompt: "Arrogant person stepping on a law scroll" },
+                    { text: "(六) 奉公守法", mean: "以公事為重，謹守法紀，不徇私舞弊。", prompt: "Honest official working diligently at a desk" },
+                    { text: "(七) 作法自斃", mean: "自己訂立的法規，反而使自己受害。比喻自作自受。", prompt: "Person getting trapped in a net they set themselves" },
+                    { text: "(八) 以身試法", mean: "原指故意違反法令，以考驗為政者執行律令的能力與決心，後專指某人無視於法律的制裁而故意犯法。", prompt: "Person touching a burning fire, symbolizing testing the law" },
+                    { text: "(九) 對簿公堂", mean: "原被告雙方在法庭上公開審問、爭訟，以辨是非。", prompt: "Two people arguing before a judge in court" },
+                    { text: "(十) 毋枉毋縱", mean: "不要冤枉好人，也不要縱容壞人。", prompt: "Scales of justice perfectly balanced, ink wash style" }
+                ],
+                quotes: [
+                    { text: "立法明分，而不以私害法，則治。", author: "(戰國 商鞅)", prompt: "Shang Yang holding a law scroll, strict atmosphere" },
+                    { text: "刑過不避大臣，賞善不遺匹夫。", author: "(韓非子)", prompt: "Han Feizi writing philosophy, stern expression" },
+                    { text: "法者，輔治之具，當以教化為先。", author: "(明代 薛瑄)", prompt: "A teacher teaching students with a law book nearby" },
+                    { text: "治將亂之國，當用重典；治久亂之國，宜予生路。", author: "(清代 曾國藩)", prompt: "Zeng Guofan portrait, wise and serious" },
+                    { text: "國家愈腐化，法律愈多。", author: "(古羅馬 泰西塔斯)", prompt: "A crumbling roman pillar surrounded by too many scrolls" },
+                    { text: "莫聽片面之詞而判決。", author: "(日本諺語)", prompt: "A judge listening to both sides with big ears" },
+                    { text: "法律少而受到嚴格遵守的國家，才能治理得更好。", author: "(法國 笛卡兒)", prompt: "Descartes portrait with a few law books" },
+                    { text: "對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。", author: "(法國 雨果)", prompt: "Victor Hugo portrait, romantic style" },
+                    { text: "人民的安全是最高的法律。", author: "(英國 培根)", prompt: "Francis Bacon portrait, english renaissance style" },
+                    { text: "執法重於立法。", author: "(美國 傑佛遜)", prompt: "Thomas Jefferson portrait, holding a declaration" },
+                    { text: "法律是顯露的道德，道德是隱藏的法律。", author: "(美國 林肯)", prompt: "Abraham Lincoln portrait, stovepipe hat" },
+                    { text: "太寬容的法律無人遵守，太嚴格的法律難以厲行。", author: "(美國 富蘭克林)", prompt: "Benjamin Franklin portrait with spectacles" }
+                ]
+            }
+        };
+
+        const generateQuestions = () => {
+            const q = [];
+            let id = 1;
+            
+            // --- 1. 形音義與辨析 ---
+            // 辯
+            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的動詞解釋為何？", options: ["分別、判別", "爭論是非曲直", "處理", "花片"], answer: "爭論是非曲直" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的名詞解釋為何？", options: ["條狀物", "花片", "能言善道的", "車子"], answer: "能言善道的" });
+            // 辨
+            q.push({ id: id++, category: "形音義與辨析", question: "「辨」字(ㄅㄧㄢˋ)的意思是？", options: ["爭論", "分別、判別", "處理", "創設"], answer: "分別、判別" });
+            // 辮
+            q.push({ id: id++, category: "形音義與辨析", question: "「辮」字(ㄅㄧㄢˋ)的意思是？", options: ["花片", "條狀物", "爭論", "能言善道"], answer: "分股編成的條狀物" });
+            // 辦
+            q.push({ id: id++, category: "形音義與辨析", question: "「辦」字(ㄅㄢˋ)不包含以下哪個意思？", options: ["處理", "創設", "懲罰", "判別"], answer: "判別" });
+            // 瓣
+            q.push({ id: id++, category: "形音義與辨析", question: "「瓣」字(ㄅㄢˋ)的意思是？", options: ["花片", "條狀物", "處理", "爭論"], answer: "花片" });
+            // 輿
+            q.push({ id: id++, category: "形音義與辨析", question: "「輿」字除了「車子」外，還有什麼意思？", options: ["轎子", "房子", "衣服", "食物"], answer: "轎子" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「輿論」中的「輿」字解釋為？", options: ["眾人的、公眾的", "車子", "轎子", "傳播"], answer: "眾人的、公眾的" });
+            // 屬
+            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄓㄨˇ」時，意思通？", options: ["主", "矚", "囑", "煮"], answer: "囑" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄕㄨˇ」時，意思不包含？", options: ["附著、歸於", "親眷", "部下", "注視"], answer: "注視" });
+            // 囑/矚
+            q.push({ id: id++, category: "形音義與辨析", question: "「囑」字的意思是？", options: ["注視", "叮嚀、託付", "附著", "爭論"], answer: "叮嚀、託付" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「矚」字的意思是？", options: ["叮嚀", "注視", "託付", "歸於"], answer: "注視" });
+            // 乃
+            q.push({ id: id++, category: "形音義與辨析", question: "「廷尉乃當之罰金」的「乃」字意思是？", options: ["是", "你", "竟、居然", "於是"], answer: "竟、居然" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「失敗乃成功之母」的「乃」字意思是？", options: ["是", "竟", "你", "才"], answer: "是" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「家祭無忘告乃翁」的「乃」字意思是？", options: ["竟", "是", "你、你的", "那"], answer: "你、你的" });
+            // 走
+            q.push({ id: id++, category: "形音義與辨析", question: "「見乘輿車騎即走耳」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，快速"], answer: "動詞，奔跑" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「販夫走卒」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，離開"], answer: "形容詞，走動的" });
+            // 於
+            q.push({ id: id++, category: "形音義與辨析", question: "「是法不信於民也」的「於」表示什麼？", options: ["被動", "給", "從", "比"], answer: "被動" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「己所不欲，勿施於人」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "給" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「千里之行，始於足下」的「於」意思是？", options: ["被", "給", "從、自", "比"], answer: "從、自" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「蜀道難，難於上青天」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "比" });
+            // 為
+            q.push({ id: id++, category: "形音義與辨析", question: "「二蟲盡為所吞」的「為」表示什麼？", options: ["被", "因為", "作為", "為了"], answer: "被" });
+
+            // --- 2. 字義整理 ---
+            // 為
+            q.push({ id: id++, category: "字義整理", question: "「釋之為廷尉」的「為」字解釋為？", options: ["因為", "被", "當、擔任", "為了"], answer: "當、擔任" });
+            q.push({ id: id++, category: "字義整理", question: "「一傾而天下用法皆為輕重」的「為」字解釋為？", options: ["因為", "被", "當", "做"], answer: "因為" });
+            // 行
+            q.push({ id: id++, category: "字義整理", question: "「上行，出中渭橋」的「行」字解釋為？", options: ["隊伍", "出巡", "走路", "行為"], answer: "出巡" });
+            q.push({ id: id++, category: "字義整理", question: "「以為行已過」的「行」字解釋為？", options: ["隊伍", "出巡", "離開", "走"], answer: "隊伍" });
+            // 下
+            q.push({ id: id++, category: "字義整理", question: "「匿橋下」的「下」字詞性是？", options: ["動詞", "名詞", "形容詞", "副詞"], answer: "名詞" });
+            q.push({ id: id++, category: "字義整理", question: "「今既下廷尉」的「下」字解釋為？", options: ["低處", "下去", "上位者交付任務給下位者", "降落"], answer: "上位者交付任務給下位者" });
+            // 使
+            q.push({ id: id++, category: "字義整理", question: "「於是使騎捕」的「使」字解釋為？", options: ["派遣", "假使", "使用", "命令"], answer: "派遣" });
+            q.push({ id: id++, category: "字義整理", question: "「上使立誅之則已」的「使」字解釋為？", options: ["派遣", "假使", "使用", "讓"], answer: "假使" });
+            // 之 (5 usages)
+            q.push({ id: id++, category: "字義整理", question: "「久之」的「之」字解釋為？", options: ["無義", "他", "的", "往"], answer: "無義" });
+            q.push({ id: id++, category: "字義整理", question: "「屬之廷尉」的「之」字指代什麼？", options: ["廷尉", "縣人/人犯", "皇帝", "馬"], answer: "縣人/人犯" });
+            q.push({ id: id++, category: "字義整理", question: "「今法如此而更重之」的「之」字指代什麼？", options: ["人犯", "指罪", "廷尉", "法律"], answer: "指罪" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉，天下之平也」的「之」字解釋為？", options: ["無義", "的", "指天下", "往"], answer: "的" });
+            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「之」字指代什麼？", options: ["指犯罪的事", "人犯", "廷尉", "無義"], answer: "指犯罪的事" });
+            // 當 (5 meanings)
+            q.push({ id: id++, category: "字義整理", question: "「人犯蹕，當罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "抵擋"], answer: "判處" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉乃當之罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "正確"], answer: "判處" });
+            q.push({ id: id++, category: "字義整理", question: "「奏當」的「當」字解釋為？", options: ["判處", "判決/判決結果", "應當", "對"], answer: "判決/判決結果" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「當」字，在「廷尉當是也」這個語境中解釋為？", options: ["判處", "判決/判決結果", "應該、應當", "正確"], answer: "判決/判決結果" });
+            q.push({ id: id++, category: "字義整理", question: "「當省則省」的「當」字解釋為？", options: ["判處", "判決", "應該、應當", "正確"], answer: "應該、應當" });
+            // 是 (3 meanings)
+            q.push({ id: id++, category: "字義整理", question: "「是法不信於民也」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「是」字解釋為？", options: ["正確的", "此、這", "是", "凡是"], answer: "正確的" });
+            q.push({ id: id++, category: "字義整理", question: "「是可忍，孰不可忍」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這" });
+            // 唯 (2 meanings)
+            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「唯」字解釋為？", options: ["只有", "希望", "獨", "被"], answer: "希望" });
+            q.push({ id: id++, category: "字義整理", question: "「唯利是圖」的「唯」字解釋為？", options: ["希望", "獨、只有", "因為", "被"], answer: "獨、只有" });
+            // 親 (2 meanings)
+            q.push({ id: id++, category: "字義整理", question: "「此人親驚吾馬」的「親」字解釋為？", options: ["親自", "親愛", "親戚", "親近"], answer: "親自" });
+            q.push({ id: id++, category: "字義整理", question: "「人人親其親」的「親」字解釋為？", options: ["親自", "親愛", "親近", "親戚"], answer: "親愛" });
+
+            // --- 3. 課文結構 ---
+            q.push({ id: id++, category: "課文結構", question: "張釋之執法一案中，犯人犯了什麼罪？", options: ["死刑", "犯蹕", "偷竊", "謀反"], answer: "犯蹕" });
+            q.push({ id: id++, category: "課文結構", question: "皇帝對張釋之初次判決的反應是？", options: ["欣然接受", "不滿發怒", "無動於衷", "大加讚賞"], answer: "不滿發怒" });
+            q.push({ id: id++, category: "課文結構", question: "張釋之據理力爭，強調法律執行的什麼原則？", options: ["嚴刑峻法", "皇權至上", "法律之前人人平等", "以德服人"], answer: "法律之前人人平等" });
+            q.push({ id: id++, category: "課文結構", question: "最終漢文帝對判決的態度是？", options: ["堅持加重刑罰", "撤換廷尉", "從善如流，認同判決", "大赦天下"], answer: "從善如流，認同判決" });
+            q.push({ id: id++, category: "課文結構", question: "關於史記的會考題：作者認為史記書寫了什麼？", options: ["呈現市井小民在歷史上的意義", "描寫史事詳盡", "透過平凡人物襯托主角", "顛覆大智若愚的價值"], answer: "呈現市井小民在歷史上的意義" });
+
+            // --- 4. 史記成語 (15 則) ---
+            q.push({ id: id++, category: "史記成語", question: "「吐哺握髮」的意思是？", options: ["形容求賢若渴", "生活忙碌", "飲食不佳", "頭髮散亂"], answer: "形容求賢若渴" });
+            q.push({ id: id++, category: "史記成語", question: "「利令智昏」的意思是？", options: ["因貪利而失去理智", "聰明反被聰明誤", "利益使人變聰明", "昏倒了"], answer: "因貪利而失去理智" });
+            q.push({ id: id++, category: "史記成語", question: "「助紂為虐」的意思是？", options: ["幫助壞人做壞事", "幫助好人", "虐待他人", "被虐待"], answer: "幫助壞人做壞事" });
+            q.push({ id: id++, category: "史記成語", question: "「肝腦塗地」的意思是？", options: ["死得很慘或甘願犧牲", "生病了", "跌倒了", "塗抹牆壁"], answer: "死得很慘或甘願犧牲" });
+            q.push({ id: id++, category: "史記成語", question: "「奇貨可居」的主角是誰？", options: ["呂不韋", "秦始皇", "韓信", "張良"], answer: "呂不韋" });
+            q.push({ id: id++, category: "史記成語", question: "「背水一戰」的意思是？", options: ["比喻決一死戰", "背著水打仗", "在水邊玩", "逃跑"], answer: "比喻決一死戰" });
+            q.push({ id: id++, category: "史記成語", question: "「韋編三絕」形容什麼？", options: ["勤奮讀書", "書本破爛", "繩子斷了", "不想讀書"], answer: "勤奮讀書" });
+            q.push({ id: id++, category: "史記成語", question: "「人為刀俎，我為魚肉」比喻什麼？", options: ["受制於人", "做菜", "殺魚", "吃飯"], answer: "受制於人" });
+            q.push({ id: id++, category: "史記成語", question: "「破釜沉舟」形容什麼精神？", options: ["視死如歸、義無反顧", "破壞公物", "坐船遊玩", "放棄希望"], answer: "視死如歸、義無反顧" });
+            q.push({ id: id++, category: "史記成語", question: "「三令五申」的意思是？", options: ["再三叮嚀告誡", "三個命令五個申請", "軍隊編制", "很多法令"], answer: "再三叮嚀告誡" });
+            q.push({ id: id++, category: "史記成語", question: "「約法三章」泛指什麼？", options: ["事先約好或規定的事", "三章法律", "寫文章", "法律很嚴格"], answer: "事先約好或規定的事" });
+            q.push({ id: id++, category: "史記成語", question: "「一諾千金」形容什麼？", options: ["承諾信用高", "很有錢", "黃金很重", "賄賂"], answer: "承諾信用高" });
+            q.push({ id: id++, category: "史記成語", question: "「一決雌雄」的意思是？", options: ["比喻互相較量以決定勝敗", "分辨公母", "決定性別", "動物打架"], answer: "比喻互相較量以決定勝敗" });
+            q.push({ id: id++, category: "史記成語", question: "「雞鳴狗盜」比喻什麼？", options: ["有卑下技能的人", "養雞養狗", "偷雞摸狗", "熱鬧的景象"], answer: "有卑下技能的人" });
+            q.push({ id: id++, category: "史記成語", question: "「毛遂自荐」的意思是？", options: ["自告奮勇", "推薦毛筆", "自我反省", "放棄機會"], answer: "自告奮勇" });
+
+            // --- 5. 法律成語與名言 ---
+            // 成語 (10 則)
+            q.push({ id: id++, category: "法律成語與名言", question: "「嚴刑峻法」的意思是？", options: ["嚴厲的刑法", "寬鬆的法律", "很多法律", "修改法律"], answer: "嚴厲的刑法" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「繩之以法」的意思是？", options: ["以法律制裁罪犯", "用繩子綁", "編織法律", "法律如繩"], answer: "以法律制裁罪犯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「貪贓枉法」的意思是？", options: ["貪汙受賄，破壞法紀", "貪吃", "法律很髒", "冤枉好人"], answer: "貪汙受賄，破壞法紀" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「就地正法」的意思是？", options: ["在犯罪所在地執行死刑", "原地不動", "改正法律", "正確的法律"], answer: "在犯罪所在地執行死刑" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「目無法紀」的意思是？", options: ["膽大妄為，無視法律", "眼睛看不見", "法律很亂", "沒有法律"], answer: "膽大妄為，無視法律" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「奉公守法」的意思是？", options: ["謹守法紀，不徇私舞弊", "侍奉公公", "守住門口", "公佈法律"], answer: "謹守法紀，不徇私舞弊" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「作法自斃」比喻什麼？", options: ["自作自受", "自己做法事", "自殺", "法律無效"], answer: "自作自受" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「以身試法」的意思是？", options: ["無視法律制裁而故意犯法", "用身體測試", "嘗試法律", "鍛鍊身體"], answer: "無視法律制裁而故意犯法" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「對簿公堂」的意思是？", options: ["在法庭上公開審問、爭訟", "寫作業", "堂上讀書", "私下和解"], answer: "在法庭上公開審問、爭訟" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「毋枉毋縱」的意思是？", options: ["不冤枉好人，不縱容壞人", "不要歪斜", "縱容壞人", "冤枉好人"], answer: "不冤枉好人，不縱容壞人" });
+            // 名言 (12 則)
+            q.push({ id: id++, category: "法律成語與名言", question: "「立法明分，而不以私害法，則治。」是誰的名言？", options: ["商鞅", "韓非子", "孔子", "孟子"], answer: "商鞅" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「刑過不避大臣，賞善不遺匹夫。」是誰的名言？", options: ["韓非子", "商鞅", "荀子", "老子"], answer: "韓非子" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法者，輔治之具，當以教化為先。」是誰的名言？", options: ["薛瑄", "曾國藩", "王陽明", "朱熹"], answer: "薛瑄" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「治將亂之國，當用重典；治久亂之國，宜予生路。」是誰的名言？", options: ["曾國藩", "李鴻章", "康有為", "梁啟超"], answer: "曾國藩" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「國家愈腐化，法律愈多。」是誰的名言？", options: ["泰西塔斯", "凱撒", "西塞羅", "柏拉圖"], answer: "泰西塔斯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「莫聽片面之詞而判決。」是哪裡的諺語？", options: ["日本", "中國", "韓國", "美國"], answer: "日本" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法律少而受到嚴格遵守的國家，才能治理得更好。」是誰的名言？", options: ["笛卡兒", "伏爾泰", "盧梭", "孟德斯鳩"], answer: "笛卡兒" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。」是誰的名言？", options: ["雨果", "巴爾扎克", "大仲馬", "莫泊桑"], answer: "雨果" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「人民的安全是最高的法律。」是誰的名言？", options: ["培根", "洛克", "霍布斯", "休謨"], answer: "培根" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「執法重於立法。」是誰的名言？", options: ["傑佛遜", "華盛頓", "羅斯福", "甘迺迪"], answer: "傑佛遜" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法律是顯露的道德，道德是隱藏的法律。」是誰的名言？", options: ["林肯", "馬克吐溫", "海明威", "愛默生"], answer: "林肯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「太寬容的法律無人遵守，太嚴格的法律難以厲行。」是誰的名言？", options: ["富蘭克林", "愛迪生", "福特", "比爾蓋茲"], answer: "富蘭克林" });
+
+            return q;
+        };
+
+        const ALL_QUESTIONS = generateQuestions(); 
+
+        const playSound = (type) => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const now = ctx.currentTime;
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        const Confetti = () => {
+            const colors = ['#F97316', '#EF4444', '#F59E0B', '#EC4899', '#FB923C', '#FCD34D'];
+            const pieces = Array.from({ length: 50 }).map((_, i) => ({
+                id: i, left: Math.random() * 100 + '%', animationDelay: Math.random() * 0.5 + 's', backgroundColor: colors[Math.floor(Math.random() * colors.length)], rotation: Math.random() * 360 + 'deg'
+            }));
+            return (
+                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+                    {pieces.map((p) => (
+                        <div key={p.id} className="absolute w-3 h-3 md:w-4 md:h-4 opacity-0 animate-confetti" style={{ left: p.left, top: '-20px', backgroundColor: p.backgroundColor, transform: `rotate(${p.rotation})`, animation: `fall 2.5s ease-out forwards ${p.animationDelay}` }} />
+                    ))}
+                    <style>{`@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }`}</style>
+                </div>
+            );
+        };
+
+        const LoadingScreen = () => (
+            <div className="flex flex-col items-center justify-center h-screen bg-stone-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
+                <p className="text-stone-600">載入中...</p>
+            </div>
+        );
+
+        // --- Auth & Dashboard Components (Same as provided) ---
+        const AuthScreen = ({ onLogin }) => {
+            const [name, setName] = useState('');
+            const [savedName, setSavedName] = useState('');
+
+            useEffect(() => {
+                const user = LocalDB.getUser();
+                if (user && user.displayName) {
+                    setSavedName(user.displayName);
+                }
+            }, []);
+
+            const handleLogin = (e, forcedName) => {
+                if (e) e.preventDefault();
+                const loginName = forcedName || name;
+                if (!loginName.trim()) return;
+                
+                const user = LocalDB.saveUser(loginName);
+                onLogin(user);
+            };
+
+            const handleQuickLogin = () => {
+                const randomNum = Math.floor(Math.random() * 1000);
+                const user = LocalDB.saveUser(`訪客 ${randomNum}`);
+                onLogin(user);
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center p-4">
+                    <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-orange-500">
+                        <div className="text-center mb-8">
+                            <BookOpen className="w-16 h-16 text-orange-600 mx-auto mb-4" />
+                            <h1 className="text-3xl font-bold text-stone-800">張釋之執法</h1>
+                            <p className="text-stone-500 mt-2">互動式學習 App (Part 2)</p>
+                        </div>
+                        
+                        {savedName && (
+                            <div className="mb-6">
+                                <button onClick={() => handleLogin(null, savedName)} className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-xl font-bold hover:from-orange-600 hover:to-amber-600 transition shadow-lg shadow-orange-200 flex items-center justify-center group">
+                                    <Sparkles className="w-5 h-5 mr-2 animate-pulse text-yellow-200" />
+                                    <span>以 {savedName} 繼續學習</span>
+                                    <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition" />
+                                </button>
+                                <div className="text-center mt-3">
+                                    <button onClick={() => { setSavedName(''); LocalDB.clearUser(); }} className="text-xs text-stone-400 hover:text-stone-600 underline">這不是我，切換帳號</button>
+                                </div>
+                                <div className="relative my-6"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-stone-200"></div></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-stone-500">或使用新身分</span></div></div>
+                            </div>
+                        )}
+
+                        <form onSubmit={handleLogin} className={`space-y-4 ${savedName ? 'hidden' : ''}`}>
+                            <div>
+                                <label className="block text-sm font-medium text-stone-700 mb-1">請輸入您的姓名</label>
+                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none" placeholder="Ex: 王小明" />
+                            </div>
+                            <button type="submit" disabled={!name.trim()} className="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50">
+                                開始學習
+                            </button>
+                        </form>
+                        
+                        <div className={`mt-4 flex items-center justify-between ${savedName ? 'hidden' : ''}`}>
+                            <div className="h-px bg-stone-200 flex-1"></div><span className="text-sm text-stone-400 px-2">或</span><div className="h-px bg-stone-200 flex-1"></div>
+                        </div>
+                        <button onClick={handleQuickLogin} className={`mt-4 w-full bg-stone-50 border-2 border-stone-200 text-stone-600 py-3 rounded-lg font-semibold hover:bg-stone-100 transition flex items-center justify-center ${savedName ? 'hidden' : ''}`}>
+                            <Zap className="w-5 h-5 mr-2 text-yellow-500" /> 快速體驗 (免輸入姓名)
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const Dashboard = ({ user, onLogout, onNavigate }) => {
+            return (
+                <div className="p-6 max-w-4xl mx-auto space-y-6">
+                    <header className="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 className="text-2xl font-bold text-stone-800">歡迎回來，{user.displayName || "同學"}</h1>
+                            <p className="text-stone-500">準備好開始今天的學習了嗎？</p>
+                        </div>
+                        <button onClick={onLogout} className="text-stone-500 hover:text-red-500 flex items-center">
+                            <LogOut className="w-6 h-6 mr-1" /> <span className="text-sm">登出</span>
+                        </button>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <button onClick={() => onNavigate('learn')} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition group border-l-4 border-orange-500 text-left">
+                            <div className="flex items-center space-x-4 mb-2">
+                                <div className="bg-orange-100 p-3 rounded-full group-hover:bg-orange-200 transition"><BookOpen className="w-8 h-8 text-orange-600" /></div>
+                                <h2 className="text-xl font-bold text-stone-800">進入學習介面</h2>
+                            </div>
+                            <p className="text-stone-500 pl-16">瀏覽形音義補充、字義整理、史記成語與課文結構。</p>
+                        </button>
+
+                        <button onClick={() => onNavigate('quiz_setup')} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition group border-l-4 border-amber-500 text-left">
+                            <div className="flex items-center space-x-4 mb-2">
+                                <div className="bg-amber-100 p-3 rounded-full group-hover:bg-amber-200 transition"><PenTool className="w-8 h-8 text-amber-600" /></div>
+                                <h2 className="text-xl font-bold text-stone-800">開始測驗</h2>
+                            </div>
+                            <p className="text-stone-500 pl-16">單元分類練習、挑戰全方位題庫，即時回饋。</p>
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 mt-8">
+                        <button onClick={() => onNavigate('history')} className="bg-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center hover:bg-stone-50 transition">
+                            <History className="w-6 h-6 text-orange-500 mb-2" /><span className="text-sm font-medium text-stone-700">測驗紀錄</span>
+                        </button>
+                        <button onClick={() => onNavigate('mistakes')} className="bg-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center hover:bg-stone-50 transition">
+                            <AlertCircle className="w-6 h-6 text-red-500 mb-2" /><span className="text-sm font-medium text-stone-700">錯題本</span>
+                        </button>
+                        <button onClick={() => onNavigate('favorites')} className="bg-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center hover:bg-stone-50 transition">
+                            <Heart className="w-6 h-6 text-rose-500 mb-2" /><span className="text-sm font-medium text-stone-700">題目收藏</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- UPDATED LearningModule with AI & Download ---
+        const LearningModule = ({ onBack }) => {
+            const [activeTab, setActiveTab] = useState('intro'); 
+            const [generatedImages, setGeneratedImages] = useState({});
+            const [loadingImages, setLoadingImages] = useState({});
+            
+            const tabs = [
+                { id: 'intro', label: '形音義補充' },
+                { id: 'grammar', label: '字義與詞句' },
+                { id: 'structure', label: '課文結構' },
+                { id: 'idioms', label: '史記成語' },
+                { id: 'law', label: '法律名言' },
+            ];
+
+            const handleGenerateImage = async (key, prompt) => {
+                if (loadingImages[key]) return;
+                setLoadingImages(prev => ({ ...prev, [key]: true }));
+                const imageUrl = await generateAIImage(prompt);
+                if (imageUrl) {
+                    setGeneratedImages(prev => ({ ...prev, [key]: imageUrl }));
+                }
+                setLoadingImages(prev => ({ ...prev, [key]: false }));
+            };
+
+            const handleDownloadAll = () => {
+                const images = Object.entries(generatedImages);
+                if (images.length === 0) {
+                    alert("目前沒有生成的圖片可供下載");
+                    return;
+                }
+                
+                images.forEach(([key, url], index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        const filename = `generated_${key}.jpg`;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, index * 300);
+                });
+            };
+
+            // Helper to render image or placeholder with Generate Button
+            const renderImageSection = (src, alt, prompt, uniqueKey) => {
+                // If we have a generated image, show it
+                if (generatedImages[uniqueKey]) {
+                    return (
+                        <div className="mt-4 border-t border-dashed border-stone-200 pt-4">
+                            <div className="relative group">
+                                <img src={generatedImages[uniqueKey]} alt={`Generated ${alt}`} className="w-full h-auto rounded-lg shadow-sm" />
+                                <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">AI 生成</div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                // If local image exists, show it, but also allow generating AI version
+                return (
+                    <div className="mt-4 border-t border-dashed border-stone-200 pt-4 flex flex-col gap-3">
+                        {src && (
+                            <img 
+                                src={src} 
+                                alt={alt} 
+                                className="w-full h-auto rounded-lg shadow-sm" 
+                                onError={(e) => e.target.style.display = 'none'}
+                            />
+                        )}
+                        
+                        {/* Generate Button */}
+                        {prompt && (
+                            <button 
+                                onClick={() => handleGenerateImage(uniqueKey, prompt)}
+                                disabled={loadingImages[uniqueKey]}
+                                className="w-full py-2 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 text-indigo-700 rounded-lg font-medium flex items-center justify-center hover:from-indigo-100 hover:to-purple-100 transition disabled:opacity-50 text-sm"
+                            >
+                                {loadingImages[uniqueKey] ? (
+                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> 正在繪製...</>
+                                ) : (
+                                    <><ImageIcon className="w-4 h-4 mr-2" /> ✨ 生成 AI 意境圖</>
+                                )}
+                            </button>
+                        )}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="h-full flex flex-col">
+                    <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+                        <div className="flex items-center">
+                            <button onClick={onBack} className="flex items-center text-stone-600 hover:text-orange-600">
+                                <ArrowLeft className="w-5 h-5 mr-1" /> 返回
+                            </button>
+                            <div className="w-4"></div>
+                            <h2 className="font-bold text-lg text-stone-800 hidden md:block">學習重點</h2>
+                        </div>
+                        <button 
+                            onClick={handleDownloadAll}
+                            className="flex items-center px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition text-sm font-medium"
+                            title="下載所有已生成的圖片"
+                        >
+                            <Download className="w-4 h-4 mr-1.5" />
+                            下載生成圖
+                        </button>
+                    </div>
+                    
+                    <div className="flex overflow-x-auto bg-stone-50 px-2 py-2 gap-2 sticky top-14 z-10 border-b">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                                    activeTab === tab.id 
+                                        ? 'bg-orange-600 text-white shadow-md' 
+                                        : 'bg-white text-stone-600 hover:bg-orange-50 border border-stone-200'
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-stone-100 pb-20">
+                        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm p-6 min-h-[500px]">
+                            
+                            {activeTab === 'intro' && (
+                                <div className="space-y-8">
+                                    <h3 className="text-2xl font-bold text-stone-800 border-b pb-2">{STUDY_CONTENT.intro.title}</h3>
+                                    
+                                    <div>
+                                        <h4 className="text-lg font-bold text-orange-700 mb-3 bg-orange-50 p-2 rounded w-fit">「ㄅㄧㄢˋ」字辨析</h4>
+                                        <div className="grid gap-3">
+                                            {STUDY_CONTENT.intro.bian_words.map((item, i) => (
+                                                <div key={i} className="bg-white border border-stone-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                                                    <div className="flex items-center mb-1">
+                                                        <span className="text-xl font-bold text-stone-800 mr-2">{item.word}</span>
+                                                        <span className="bg-stone-100 text-stone-600 text-xs px-2 py-1 rounded">{item.type}</span>
+                                                    </div>
+                                                    <p className="text-stone-600">{item.mean}</p>
+                                                    {item.type2 && (
+                                                        <div className="mt-2 border-t pt-2 border-dashed border-stone-100">
+                                                            <span className="bg-stone-100 text-stone-600 text-xs px-2 py-1 rounded mr-2">{item.type2}</span>
+                                                            <span className="text-stone-600">{item.mean2}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="text-lg font-bold text-emerald-700 mb-3 bg-emerald-50 p-2 rounded w-fit">注釋辨析</h4>
+                                        <div className="space-y-3">
+                                            {STUDY_CONTENT.intro.notes.map((note, i) => (
+                                                <div key={i} className="border-l-4 border-emerald-400 bg-stone-50 p-4 rounded">
+                                                    <h5 className="font-bold text-lg text-emerald-800 mb-2">{note.char}</h5>
+                                                    <ul className="list-disc pl-5 space-y-1 text-stone-700">
+                                                        {note.means.map((m, idx) => <li key={idx}>{m}</li>)}
+                                                    </ul>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'grammar' && (
+                                <div className="space-y-8">
+                                    <h3 className="text-2xl font-bold text-stone-800 border-b pb-2">{STUDY_CONTENT.grammar.title}</h3>
+                                    
+                                    <div>
+                                        <h4 className="text-lg font-bold text-indigo-700 mb-3 bg-indigo-50 p-2 rounded w-fit">字義整理</h4>
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full divide-y divide-stone-200 border border-stone-200 rounded-lg overflow-hidden">
+                                                <thead className="bg-stone-100">
+                                                    <tr>
+                                                        <th className="px-4 py-3 text-left text-xs font-bold text-stone-500 uppercase tracking-wider">字</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-bold text-stone-500 uppercase tracking-wider">文句</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-bold text-stone-500 uppercase tracking-wider">字義與圖示</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="bg-white divide-y divide-stone-200">
+                                                    {STUDY_CONTENT.grammar.table.map((row, i) => (
+                                                        <tr key={i} className="hover:bg-stone-50">
+                                                            <td className="px-4 py-3 whitespace-nowrap font-bold text-stone-800">{row.char}</td>
+                                                            <td className="px-4 py-3 text-stone-700">{row.sent}</td>
+                                                            <td className="px-4 py-3 text-indigo-600 font-medium min-w-[200px]">
+                                                                {row.mean}
+                                                                {renderImageSection(row.image, row.char, row.prompt, `grammar_table_${i}`)}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    {/* 新增：重點詞語注釋區塊 */}
+                                    <div>
+                                        <h4 className="text-lg font-bold text-teal-700 mb-3 bg-teal-50 p-2 rounded w-fit flex items-center">
+                                            <List className="w-5 h-5 mr-2"/> 重點詞語注釋
+                                        </h4>
+                                        <div className="grid gap-3">
+                                            {STUDY_CONTENT.grammar.vocab.map((item, i) => (
+                                                <div key={i} className="bg-white border border-teal-100 p-4 rounded-lg shadow-sm">
+                                                    <h5 className="font-bold text-teal-800 mb-1">{item.text}</h5>
+                                                    <p className="text-stone-700">{item.mean}</p>
+                                                    {renderImageSection(null, item.text, item.prompt, `grammar_vocab_${i}`)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="text-lg font-bold text-rose-700 mb-3 bg-rose-50 p-2 rounded w-fit">詞句辨析</h4>
+                                        <div className="grid gap-4">
+                                            {STUDY_CONTENT.grammar.phrases.map((item, i) => (
+                                                <div key={i} className="bg-white border border-rose-100 p-4 rounded-lg shadow-sm">
+                                                    <h5 className="font-bold text-rose-800 mb-2">{item.title}</h5>
+                                                    <p className="text-stone-700">{item.content}</p>
+                                                    {renderImageSection(null, item.title, item.prompt, `grammar_phrase_${i}`)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'structure' && (
+                                <div className="space-y-6">
+                                    <h3 className="text-2xl font-bold text-stone-800 border-b pb-2">{STUDY_CONTENT.structure.title}</h3>
+                                    
+                                    <div className="space-y-4">
+                                        {STUDY_CONTENT.structure.stages.map((stage, i) => (
+                                            <div key={i} className="bg-white border border-stone-200 rounded-xl p-6 shadow-sm flex flex-col md:flex-row gap-4 items-start hover:shadow-md transition">
+                                                <div className="flex-1">
+                                                    <h4 className="font-bold text-xl text-blue-700 mb-2">{stage.name}</h4>
+                                                    <p className="text-stone-700 leading-relaxed text-lg">{stage.desc}</p>
+                                                </div>
+                                                <div className="w-full md:w-1/3">
+                                                    {renderImageSection(stage.image, stage.name, stage.prompt, `structure_stage_${i}`)}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-6">
+                                        <h4 className="font-bold text-lg text-amber-800 mb-4 flex items-center"><BookOpen className="w-5 h-5 mr-2"/> 閱讀測驗 (108會考)</h4>
+                                        <p className="mb-4 text-stone-800 italic bg-white p-4 rounded border border-amber-100">
+                                            {STUDY_CONTENT.structure.exam.text}
+                                        </p>
+                                        <p className="font-bold text-stone-800 mb-3">{STUDY_CONTENT.structure.exam.question}</p>
+                                        <ul className="space-y-2 mb-4">
+                                            {STUDY_CONTENT.structure.exam.options.map((opt, i) => (
+                                                <li key={i} className="text-stone-700">{opt}</li>
+                                            ))}
+                                        </ul>
+                                        <div className="text-sm font-bold text-green-600 bg-green-50 p-2 rounded inline-block">
+                                            解答：{STUDY_CONTENT.structure.exam.answer}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'idioms' && (
+                                <div className="space-y-6">
+                                    <h3 className="text-2xl font-bold text-stone-800 border-b pb-2">{STUDY_CONTENT.idioms.title}</h3>
+                                    <div className="grid gap-6">
+                                        {STUDY_CONTENT.idioms.items.map((item, i) => (
+                                            <div key={i} className="border border-stone-200 rounded-xl p-5 hover:shadow-md transition bg-white overflow-hidden">
+                                                <h4 className="font-bold text-xl text-emerald-700 mb-2">{item.name}</h4>
+                                                <p className="text-stone-700 mb-3 text-lg">{item.mean}</p>
+                                                <div className="text-sm text-stone-500 bg-stone-50 p-3 rounded mb-4 border-l-2 border-emerald-200 italic">
+                                                    出處：{item.source}
+                                                </div>
+                                                {renderImageSection(`images/idioms_shiji_${i}.jpg`, item.name, item.prompt, `idioms_${i}`)}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'law' && (
+                                <div className="space-y-8">
+                                    <h3 className="text-2xl font-bold text-stone-800 border-b pb-2">{STUDY_CONTENT.law.title}</h3>
+                                    
+                                    <div>
+                                        <h4 className="text-lg font-bold text-slate-700 mb-3 bg-slate-100 p-2 rounded w-fit flex items-center">
+                                            <Gavel className="w-5 h-5 mr-2"/> 法律成語
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {STUDY_CONTENT.law.idioms.map((item, i) => (
+                                                <div key={i} className="bg-white border border-slate-200 p-4 rounded-lg flex flex-col">
+                                                    <span className="font-bold text-lg text-slate-800 mb-1">{item.text}</span>
+                                                    <span className="text-slate-600">{item.mean}</span>
+                                                    {renderImageSection(null, item.text, item.prompt, `law_idiom_${i}`)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="text-lg font-bold text-cyan-700 mb-3 bg-cyan-50 p-2 rounded w-fit flex items-center">
+                                            <Scale className="w-5 h-5 mr-2"/> 法律名言
+                                        </h4>
+                                        <div className="space-y-3">
+                                            {STUDY_CONTENT.law.quotes.map((quote, i) => (
+                                                <div key={i} className="bg-cyan-50/50 p-4 rounded-lg border-l-4 border-cyan-400">
+                                                    <p className="text-stone-800 font-medium text-lg mb-2">"{quote.text}"</p>
+                                                    <p className="text-cyan-700 text-sm font-bold text-right">— {quote.author}</p>
+                                                    {renderImageSection(null, quote.author, quote.prompt, `law_quote_${i}`)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const FullQuizModule = ({ user, onBack, onComplete }) => {
+            const [selectedCategory, setSelectedCategory] = useState(null); 
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [favorites, setFavorites] = useState(new Set());
+            const [questions, setQuestions] = useState([]);
+            const [isAnswered, setIsAnswered] = useState(false);
+            const [showConfetti, setShowConfetti] = useState(false);
+            const [isSubmitting, setIsSubmitting] = useState(false);
+
+            useEffect(() => {
+                if (!selectedCategory) return;
+                let filtered = [...ALL_QUESTIONS];
+                if (selectedCategory !== 'all') {
+                    filtered = filtered.filter(q => q.category === selectedCategory);
+                }
+                filtered = filtered.sort(() => 0.5 - Math.random());
+                setQuestions(filtered);
+                setCurrentQuestionIndex(0);
+                setAnswers({});
+                setIsAnswered(false);
+            }, [selectedCategory]);
+
+            useEffect(() => {
+                const favSet = LocalDB.getFavorites();
+                const intSet = new Set(Array.from(favSet).map(id => parseInt(id)));
+                setFavorites(intSet);
+            }, []);
+
+            const toggleFavorite = (qId) => {
+                const newFavs = LocalDB.toggleFavorite(qId);
+                const intSet = new Set(Array.from(newFavs).map(id => parseInt(id)));
+                setFavorites(intSet);
+            };
+
+            const handleAnswer = (option) => {
+                if (isAnswered) return; 
+                const currentQ = questions[currentQuestionIndex];
+                const isCorrect = option === currentQ.answer;
+                setAnswers(prev => ({ ...prev, [currentQ.id]: option }));
+                setIsAnswered(true);
+                if (isCorrect) {
+                    playSound('correct');
+                    setShowConfetti(true);
+                    setTimeout(() => setShowConfetti(false), 2500);
+                } else {
+                    playSound('incorrect');
+                }
+            };
+
+            const handleSubmit = () => {
+                if (isSubmitting) return; 
+                setIsSubmitting(true);
+                try {
+                    let score = 0;
+                    const details = questions.map(q => {
+                        const isCorrect = answers[q.id] === q.answer;
+                        if (isCorrect) score += 1;
+                        return {
+                            id: q.id,
+                            question: q.question,
+                            userAnswer: answers[q.id],
+                            correctAnswer: q.answer,
+                            isCorrect,
+                            options: q.options,
+                            category: q.category
+                        };
+                    });
+                    
+                    // Save to local history
+                    LocalDB.addHistory({
+                        score: Math.round((score / questions.length) * 100),
+                        total: questions.length,
+                        category: selectedCategory === 'all' ? '綜合挑戰' : selectedCategory,
+                        details: details
+                    });
+
+                    // Save mistakes
+                    for (const detail of details) {
+                        if (!detail.isCorrect) {
+                            LocalDB.addMistake({
+                                id: detail.id,
+                                question: detail.question,
+                                answer: detail.correctAnswer,
+                                category: detail.category
+                            });
+                        }
+                    }
+
+                    onComplete({ score: Math.round((score / questions.length) * 100), details });
+                } catch (error) {
+                    console.error(error);
+                    alert("儲存成績時發生錯誤");
+                    setIsSubmitting(false); 
+                }
+            };
+
+            if (!selectedCategory) {
+                const categories = [
+                    { id: '形音義與辨析', label: '形音義與辨析', icon: <PenTool className="w-6 h-6 text-blue-500"/>, desc: '字音字形辨析與注釋' },
+                    { id: '字義整理', label: '字義整理', icon: <FileText className="w-6 h-6 text-purple-500"/>, desc: '重要字詞解釋與詞性' },
+                    { id: '課文結構', label: '課文結構', icon: <LayoutGrid className="w-6 h-6 text-orange-500"/>, desc: '案情發展與閱讀測驗' },
+                    { id: '史記成語', label: '史記成語', icon: <BookOpen className="w-6 h-6 text-emerald-500"/>, desc: '源自史記的著名成語' },
+                    { id: '法律成語與名言', label: '法律成語與名言', icon: <Gavel className="w-6 h-6 text-slate-500"/>, desc: '法律相關成語及中外名言' },
+                    { id: 'all', label: '全範圍綜合挑戰', icon: <Zap className="w-6 h-6 text-yellow-500"/>, desc: '包含以上所有單元的綜合測驗', isAll: true },
+                ];
+                return (
+                    <div className="h-full flex flex-col bg-stone-50">
+                        <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center sticky top-0 z-10"><button onClick={onBack} className="flex items-center text-stone-600 hover:text-orange-600 mr-4"><ArrowLeft className="w-5 h-5 mr-1" /> 返回</button><h2 className="font-bold text-lg text-stone-800">選擇測驗單元</h2></div>
+                        <div className="p-6 overflow-y-auto"><div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">{categories.map(cat => (<button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`text-left p-6 rounded-2xl shadow-sm border-2 transition hover:shadow-md flex items-start ${cat.isAll ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 hover:border-yellow-400' : 'bg-white border-stone-100 hover:border-orange-200'}`}><div className={`p-3 rounded-full mr-4 ${cat.isAll ? 'bg-white shadow-sm' : 'bg-stone-50'}`}>{cat.icon}</div><div><h3 className={`font-bold text-lg mb-1 ${cat.isAll ? 'text-yellow-800' : 'text-stone-800'}`}>{cat.label}</h3><p className="text-sm text-stone-500">{cat.desc}</p></div></button>))}</div></div>
+                    </div>
+                );
+            }
+
+            if (questions.length === 0) return <LoadingScreen />;
+            const currentQ = questions[currentQuestionIndex];
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            
+            return (
+                <div className="h-full flex flex-col bg-stone-50 relative">
+                    {showConfetti && <Confetti />}
+                    <div className="bg-white shadow-sm px-4 py-3 flex items-center justify-between z-10">
+                        <div className="flex items-center"><button onClick={onBack} className="flex items-center text-stone-500 hover:text-orange-600 mr-4 px-3 py-1 rounded-full hover:bg-stone-50 transition border border-transparent hover:border-stone-200"><Home className="w-4 h-4 mr-1" /> <span className="text-sm font-medium">首頁</span></button><div className="flex items-center text-stone-500 border-l pl-4"><span className="font-mono text-lg font-bold text-orange-600 mr-2">{currentQuestionIndex + 1}</span><span className="text-sm">/ {questions.length}</span></div></div>
+                        <div className="flex-1 mx-4 h-2 bg-stone-200 rounded-full overflow-hidden max-w-xs md:max-w-md hidden md:block"><div className="h-full bg-orange-500 transition-all duration-300" style={{ width: `${progress}%` }}></div></div>
+                        <button onClick={() => toggleFavorite(currentQ.id)} className={`p-2 rounded-full hover:bg-stone-100 transition`}><Heart className={`w-6 h-6 transition-colors duration-300 ${favorites.has(currentQ.id) ? 'fill-rose-500 text-rose-500' : 'text-stone-400'}`} /></button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
+                        <div className="w-full max-w-2xl flex-1">
+                            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10 mb-6 relative">
+                                <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full mb-4">{currentQ.category}</span>
+                                <h3 className="text-xl md:text-2xl font-bold text-stone-800 mb-8 leading-relaxed">{currentQ.question}</h3>
+                                <div className="space-y-3">{currentQ.options.map((opt, i) => {
+                                    let statusClass = "border-stone-100 hover:border-stone-300 text-stone-700";
+                                    if (isAnswered) { if (opt === currentQ.answer) { statusClass = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold"; } else if (opt === answers[currentQ.id]) { statusClass = "border-red-500 bg-red-50 text-red-900"; } else { statusClass = "border-stone-100 opacity-50"; } }
+                                    return (<button key={i} onClick={() => handleAnswer(opt)} disabled={isAnswered} className={`w-full text-left p-5 rounded-xl border-2 transition relative text-lg font-medium ${statusClass}`}><span className="inline-block w-6 font-bold text-stone-400 mr-2">{String.fromCharCode(65 + i)}.</span>{opt}{isAnswered && opt === currentQ.answer && <CheckCircle className="w-5 h-5 text-emerald-600 absolute right-4 top-1/2 -translate-y-1/2" />}{isAnswered && opt === answers[currentQ.id] && opt !== currentQ.answer && <XCircle className="w-5 h-5 text-red-600 absolute right-4 top-1/2 -translate-y-1/2" />}</button>);
+                                })}</div>
+                            </div>
+                            {isAnswered && (<div className={`rounded-xl p-6 mb-6 animate-fade-in ${answers[currentQ.id] === currentQ.answer ? 'bg-emerald-100 text-emerald-900' : 'bg-red-50 text-red-900'}`}><div className="flex items-center mb-2 font-bold text-lg">{answers[currentQ.id] === currentQ.answer ? <><CheckCircle className="w-6 h-6 mr-2" /> 答對了！</> : <><XCircle className="w-6 h-6 mr-2" /> 答錯了！</>}</div><div className="mt-4 text-xl"><span className="font-bold">正確答案：</span> {currentQ.answer}<div className="mt-3 text-stone-700 text-lg leading-relaxed">此題出自 <span className="font-semibold">{currentQ.category}</span> 章節。建議複習相關筆記以加深印象。</div></div></div>)}
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 border-t flex justify-between items-center z-10 sticky bottom-0">
+                        <div className="w-24"></div> 
+                        {isAnswered ? (currentQuestionIndex < questions.length - 1 ? (<button onClick={() => { setIsAnswered(false); setShowConfetti(false); setCurrentQuestionIndex(c => c + 1); }} className="px-8 py-3 bg-stone-800 text-white rounded-full hover:bg-stone-700 transition font-bold shadow-lg flex items-center animate-bounce-subtle">下一題 <ChevronRight className="w-5 h-5 ml-1" /></button>) : (<button onClick={handleSubmit} disabled={isSubmitting} className="px-8 py-3 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition font-bold shadow-lg shadow-orange-200 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> 處理中...</> : <>查看總成績 <CheckCircle className="w-5 h-5 ml-2" /></>}</button>)) : (<div className="text-stone-400 text-sm italic">請選擇一個答案以繼續</div>)}<div className="w-24"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ResultReview = ({ result, onExit }) => {
+            return (
+                <div className="h-full bg-stone-50 overflow-y-auto">
+                    <div className="max-w-3xl mx-auto p-6">
+                        <div className="bg-white rounded-3xl shadow-lg p-8 mb-8 text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-500 to-amber-500"></div>
+                            <h2 className="text-3xl font-bold text-stone-800 mb-2">測驗結果</h2>
+                            <div className="text-6xl font-black text-orange-600 my-4">{result.score}<span className="text-2xl text-stone-400 font-normal">分</span></div>
+                            <div className="flex justify-center gap-4 text-sm text-stone-500">
+                                <span>總題數: {result.details.length}</span>
+                                <span className="text-green-600">答對: {result.details.filter(d => d.isCorrect).length}</span>
+                                <span className="text-red-500">答錯: {result.details.filter(d => !d.isCorrect).length}</span>
+                            </div>
+                            <button onClick={onExit} className="mt-8 px-8 py-2 border border-stone-300 rounded-full hover:bg-stone-50 transition">
+                                返回首頁
+                            </button>
+                        </div>
+
+                        <h3 className="text-xl font-bold text-stone-800 mb-4 px-2">試題解析</h3>
+                        <div className="space-y-4">
+                            {result.details.map((item, i) => (
+                                <div key={i} className={`bg-white rounded-xl shadow-sm p-6 border-l-4 ${item.isCorrect ? 'border-emerald-500' : 'border-red-500'}`}>
+                                    <div className="flex items-start justify-between mb-3">
+                                        <h4 className="font-bold text-lg text-stone-800 flex-1">{i + 1}. {item.question}</h4>
+                                        {item.isCorrect 
+                                            ? <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
+                                            : <XCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+                                        }
+                                    </div>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex items-center">
+                                            <span className="w-20 text-stone-500">您的答案：</span>
+                                            <span className={`font-bold ${item.isCorrect ? 'text-emerald-700' : 'text-red-600'}`}>
+                                                {item.userAnswer || '(未作答)'}
+                                            </span>
+                                        </div>
+                                        {!item.isCorrect && (
+                                            <div className="flex items-center">
+                                                <span className="w-20 text-stone-500">正確答案：</span>
+                                                <span className="font-bold text-emerald-700">{item.correctAnswer}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ListView = ({ title, type, user, onBack }) => {
+            const [items, setItems] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [expandedId, setExpandedId] = useState(null);
+
+            useEffect(() => {
+                const fetchData = async () => {
+                    let data = [];
+                    
+                    if (type === 'history') {
+                        data = LocalDB.getHistory();
+                    } else if (type === 'mistakes') {
+                        data = LocalDB.getMistakes();
+                    } else if (type === 'favorites') {
+                        const favSet = LocalDB.getFavorites();
+                        const favIds = Array.from(favSet).map(id => parseInt(id));
+                        data = ALL_QUESTIONS.filter(q => favIds.includes(q.id));
+                    }
+
+                    setItems(data);
+                    setLoading(false);
+                };
+                fetchData();
+            }, [user, type]);
+
+            if (loading) return <LoadingScreen />;
+
+            return (
+                <div className="h-full bg-stone-50 flex flex-col">
+                    <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center sticky top-0 z-10">
+                        <button onClick={onBack} className="flex items-center text-stone-600 hover:text-orange-600 mr-4">
+                            <ArrowLeft className="w-5 h-5 mr-1" /> 返回
+                        </button>
+                        <h2 className="font-bold text-lg">{title}</h2>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                        <div className="max-w-3xl mx-auto space-y-4">
+                            {items.length === 0 && (
+                                <div className="text-center py-20 text-stone-400">
+                                    <p>目前沒有紀錄</p>
+                                </div>
+                            )}
+
+                            {/* History Item */}
+                            {type === 'history' && items.map((item) => (
+                                <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                                    <div 
+                                        className="flex justify-between items-center cursor-pointer" 
+                                        onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
+                                    >
+                                        <div>
+                                            <div className="text-stone-500 text-xs mb-1">
+                                                {item.date ? new Date(item.date).toLocaleString() : 'Just now'}
+                                            </div>
+                                            <div className="font-bold text-stone-800 flex items-center">
+                                                <span className="mr-2 text-sm bg-stone-100 px-2 py-0.5 rounded text-stone-600">
+                                                    {item.category || '綜合挑戰'}
+                                                </span>
+                                                測驗得分：
+                                                <span className={`text-lg ml-1 ${item.score >= 80 ? 'text-emerald-600' : 'text-orange-600'}`}>
+                                                    {item.score}
+                                                </span> 分
+                                            </div>
+                                        </div>
+                                        {expandedId === item.id ? (
+                                            <ChevronUp className="w-5 h-5 text-stone-400" />
+                                        ) : (
+                                            <ChevronDown className="w-5 h-5 text-stone-400" />
+                                        )}
+                                    </div>
+                                    
+                                    {/* Enhanced Detail View for History */}
+                                    {expandedId === item.id && (
+                                        <div className="mt-4 pt-4 border-t border-stone-100 space-y-4">
+                                            {item.details.map((d, i) => (
+                                                <div key={i} className="bg-stone-50 p-4 rounded-lg border border-stone-200">
+                                                    {/* Question Header */}
+                                                    <div className="flex items-start mb-3">
+                                                        <span className="font-mono font-bold text-orange-600 mr-2 mt-0.5">{i+1}.</span>
+                                                        <h4 className="font-bold text-stone-800 text-lg leading-snug flex-1">
+                                                            {d.question}
+                                                        </h4>
+                                                        {d.isCorrect 
+                                                            ? <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 ml-2" />
+                                                            : <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 ml-2" />
+                                                        }
+                                                    </div>
+
+                                                    {/* Options Display */}
+                                                    <div className="space-y-1 mb-3 pl-6">
+                                                        {d.options && d.options.map((opt, idx) => {
+                                                            let optionStyle = "text-stone-600";
+                                                            let icon = null;
+
+                                                            if (opt === d.correctAnswer) {
+                                                                optionStyle = "bg-emerald-100 text-emerald-800 font-bold border-emerald-200";
+                                                                icon = <CheckCircle className="w-4 h-4 ml-2 inline" />;
+                                                            } else if (opt === d.userAnswer && !d.isCorrect) {
+                                                                optionStyle = "bg-red-50 text-red-800 line-through border-red-100";
+                                                                icon = <XCircle className="w-4 h-4 ml-2 inline" />;
+                                                            }
+
+                                                            return (
+                                                                <div key={idx} className={`px-3 py-2 rounded text-sm border border-transparent ${optionStyle} flex items-center`}>
+                                                                    <span className="font-mono w-5 opacity-50 mr-1">{String.fromCharCode(65 + idx)}.</span>
+                                                                    <span className="flex-1">{opt}</span>
+                                                                    {icon}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {/* Analysis / Feedback Section */}
+                                                    <div className="bg-white p-3 rounded border border-stone-100 text-sm mt-2 pl-6 relative">
+                                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-400 rounded-l"></div>
+                                                        <div className="flex flex-col sm:flex-row gap-y-1 sm:gap-x-6 text-sm mb-1">
+                                                            <div>
+                                                                <span className="text-stone-400 mr-2">您的作答:</span>
+                                                                <span className={`font-bold ${d.isCorrect ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                                    {d.userAnswer || '未作答'}
+                                                                </span>
+                                                            </div>
+                                                            {!d.isCorrect && (
+                                                                <div>
+                                                                    <span className="text-stone-400 mr-2">正確答案:</span>
+                                                                    <span className="font-bold text-emerald-600">{d.correctAnswer}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-stone-500 text-xs mt-2 pt-2 border-t border-stone-50">
+                                                            <span className="font-bold text-orange-400 mr-1">解析:</span>
+                                                            此題屬於「{item.category || '綜合挑戰'}」單元。請複習相關講義內容以加深記憶。
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* Mistakes & Favorites List */}
+                            {(type === 'mistakes' || type === 'favorites') && items.map((item) => (
+                                <div key={item.id} className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-400">
+                                    <div className="flex justify-between mb-3">
+                                        <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">{item.category || (ALL_QUESTIONS.find(q=>q.id === item.id)?.category)}</span>
+                                        {type === 'mistakes' ? (
+                                            <span className="text-xs text-red-500 font-bold">答錯</span>
+                                        ) : (
+                                            <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+                                        )}
+                                    </div>
+                                    <h3 className="font-bold text-lg text-stone-800 mb-3">{item.question}</h3>
+                                    <div className="bg-emerald-50 p-3 rounded text-sm text-emerald-800">
+                                        <span className="font-bold">正確答案：</span> {item.answer || (ALL_QUESTIONS.find(q=>q.id === item.id)?.answer)}
+                                    </div>
+                                    
+                                    {/* Controls for removal */}
+                                    <div className="mt-4 flex justify-end">
+                                        {type === 'mistakes' && (
+                                            <button 
+                                                onClick={async (e) => {
+                                                    e.target.innerText = "已移除";
+                                                    e.target.disabled = true;
+                                                    LocalDB.removeMistake(item.id);
+                                                }}
+                                                className="text-sm text-stone-400 hover:text-red-500 flex items-center"
+                                            >
+                                                <CheckCircle className="w-4 h-4 mr-1"/> 我學會了（移除）
+                                            </button>
+                                        )}
+                                        {type === 'favorites' && (
+                                            <button 
+                                                onClick={async (e) => {
+                                                    e.target.innerText = "已取消收藏";
+                                                    e.target.disabled = true;
+                                                    LocalDB.removeFavorite(item.id);
+                                                }}
+                                                className="text-sm text-stone-400 hover:text-red-500 flex items-center"
+                                            >
+                                                <Heart className="w-4 h-4 mr-1"/> 取消收藏
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [user, setUser] = useState(null);
+            const [view, setView] = useState('auth'); 
+            const [loading, setLoading] = useState(true);
+            const [quizResult, setQuizResult] = useState(null);
+
+            useEffect(() => {
+                const checkLogin = () => {
+                    const savedUser = LocalDB.getUser();
+                    if (savedUser) {
+                        setUser(savedUser);
+                        setView('dashboard');
+                    } else {
+                        setUser(null);
+                        setView('auth');
+                    }
+                    setLoading(false);
+                };
+                checkLogin();
+            }, []);
+
+            if (loading) return <LoadingScreen />;
+
+            if (view === 'auth') return <AuthScreen onLogin={(u) => { setUser(u); setView('dashboard'); }} />;
+            if (view === 'dashboard') return <Dashboard user={user} onLogout={() => { setUser(null); setView('auth'); }} onNavigate={setView} />;
+            if (view === 'learn') return <LearningModule onBack={() => setView('dashboard')} />;
+            if (view === 'quiz_setup') {
+                return <FullQuizModule user={user} onBack={() => setView('dashboard')} onComplete={(res) => { setQuizResult(res); setView('quiz_result'); }} />;
+            }
+            if (view === 'quiz_result') return <ResultReview result={quizResult} onExit={() => setView('dashboard')} />;
+            if (view === 'history') return <ListView title="測驗歷史紀錄" type="history" user={user} onBack={() => setView('dashboard')} />;
+            if (view === 'mistakes') return <ListView title="錯題本 (尚未掌握)" type="mistakes" user={user} onBack={() => setView('dashboard')} />;
+            if (view === 'favorites') return <ListView title="我的題目收藏" type="favorites" user={user} onBack={() => setView('dashboard')} />;
+
+            return <div className="p-4 text-center">未知頁面</div>;
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
