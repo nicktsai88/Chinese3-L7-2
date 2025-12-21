@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>張釋之執法 - 互動學習 App (Chinese3-L7-2)</title>
+    <title>張釋之執法 - 互動學習 App (全方位題庫版)</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -79,7 +79,7 @@
             BookOpen, PenTool, History, Heart, AlertCircle, CheckCircle, XCircle, 
             ChevronRight, LogOut, User, ArrowLeft, Zap, Volume2, Home, LayoutGrid, 
             Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, Download, ImageOff,
-            Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw
+            Gavel, Scale, FileText, List, Rocket, Trophy
         } from 'lucide-react';
 
         // --- API Key Configuration ---
@@ -143,15 +143,12 @@
             }
         };
 
-        // --- LocalStorage Database Helper (Updated Prefix) ---
-        const PREFIX = 'Chinese3-L7-2_';
+        // --- LocalStorage Database Helper ---
         const STORAGE_KEYS = {
-            USER: PREFIX + 'user', 
-            HISTORY: PREFIX + 'history',
-            MISTAKES: PREFIX + 'mistakes',
-            FAVORITES: PREFIX + 'favorites',
-            QUIZ_PROGRESS: PREFIX + 'quiz_progress', // Auto-save for Standard Quiz
-            QUICK_QUIZ_PROGRESS: PREFIX + 'quick_quiz_progress' // Auto-save for Quick Quiz
+            USER: 'learning_app_user_v2', 
+            HISTORY: 'learning_app_history_v2',
+            MISTAKES: 'learning_app_mistakes_v2',
+            FAVORITES: 'learning_app_favorites_v2'
         };
 
         const LocalDB = {
@@ -214,31 +211,10 @@
                 const favs = LocalDB.getFavorites();
                 favs.delete(id.toString());
                 localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(Array.from(favs)));
-            },
-            // --- Auto Save Methods ---
-            saveQuizProgress: (data) => {
-                localStorage.setItem(STORAGE_KEYS.QUIZ_PROGRESS, JSON.stringify(data));
-            },
-            getQuizProgress: () => {
-                const data = localStorage.getItem(STORAGE_KEYS.QUIZ_PROGRESS);
-                return data ? JSON.parse(data) : null;
-            },
-            clearQuizProgress: () => {
-                localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
-            },
-            saveQuickQuizProgress: (data) => {
-                localStorage.setItem(STORAGE_KEYS.QUICK_QUIZ_PROGRESS, JSON.stringify(data));
-            },
-            getQuickQuizProgress: () => {
-                const data = localStorage.getItem(STORAGE_KEYS.QUICK_QUIZ_PROGRESS);
-                return data ? JSON.parse(data) : null;
-            },
-            clearQuickQuizProgress: () => {
-                localStorage.removeItem(STORAGE_KEYS.QUICK_QUIZ_PROGRESS);
             }
         };
         
-        // --- Global Data Definitions (Same as before) ---
+        // --- Global Data Definitions ---
         const STUDY_CONTENT = {
             intro: {
                 title: "形音義補充與辨析",
@@ -625,13 +601,6 @@
         };
 
         const Dashboard = ({ user, onLogout, onNavigate }) => {
-            const [hasResumeData, setHasResumeData] = useState(false);
-
-            useEffect(() => {
-                const data = LocalDB.getQuizProgress();
-                setHasResumeData(!!data);
-            }, []);
-
             return (
                 <div className="p-6 max-w-4xl mx-auto space-y-6">
                     <header className="flex justify-between items-center mb-8">
@@ -656,24 +625,14 @@
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Standard Quiz */}
-                            <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition group border-l-4 border-amber-500 text-left flex flex-col justify-between">
-                                <button onClick={() => onNavigate('quiz_setup', { resume: false })} className="text-left w-full mb-2">
-                                    <div className="flex items-center space-x-4 mb-2">
-                                        <div className="bg-amber-100 p-3 rounded-full group-hover:bg-amber-200 transition"><PenTool className="w-8 h-8 text-amber-600" /></div>
-                                        <h2 className="text-xl font-bold text-stone-800">一般測驗</h2>
-                                        <span className="bg-stone-100 text-stone-500 text-xs px-2 py-1 rounded">逐題模式</span>
-                                    </div>
-                                    <p className="text-stone-500 pl-16">模擬真實考試，逐題作答並在最後查看總成績與解析。</p>
-                                </button>
-                                {hasResumeData && (
-                                    <button 
-                                        onClick={() => onNavigate('quiz_setup', { resume: true })}
-                                        className="mt-4 ml-16 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg text-sm font-bold flex items-center hover:bg-amber-200 transition animate-fade-in"
-                                    >
-                                        <RotateCcw className="w-4 h-4 mr-2" /> 繼續上次的測驗
-                                    </button>
-                                )}
-                            </div>
+                            <button onClick={() => onNavigate('quiz_setup')} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition group border-l-4 border-amber-500 text-left">
+                                <div className="flex items-center space-x-4 mb-2">
+                                    <div className="bg-amber-100 p-3 rounded-full group-hover:bg-amber-200 transition"><PenTool className="w-8 h-8 text-amber-600" /></div>
+                                    <h2 className="text-xl font-bold text-stone-800">一般測驗</h2>
+                                    <span className="bg-stone-100 text-stone-500 text-xs px-2 py-1 rounded">逐題模式</span>
+                                </div>
+                                <p className="text-stone-500 pl-16">模擬真實考試，逐題作答並在最後查看總成績與解析。</p>
+                            </button>
 
                             {/* Quick Quiz - New! */}
                             <button onClick={() => onNavigate('quick_quiz')} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition group border-l-4 border-purple-500 text-left relative overflow-hidden">
@@ -717,36 +676,9 @@
                 setFavorites(favSet);
             }, []);
 
-            // Initial Check for Save Data
+            // Initial Filter Logic
             useEffect(() => {
-                const savedData = LocalDB.getQuickQuizProgress();
-                if (savedData && !selectedCategory) {
-                    if (window.confirm("是否繼續上次未完成的測驗？")) {
-                        setSelectedCategory(savedData.category);
-                        setQuestions(savedData.questions);
-                        setAnswers(savedData.answers);
-                        setScore(savedData.score);
-                    } else {
-                        LocalDB.clearQuickQuizProgress();
-                    }
-                }
-            }, []);
-
-            // Auto Save
-            useEffect(() => {
-                if (selectedCategory && questions.length > 0) {
-                    LocalDB.saveQuickQuizProgress({
-                        category: selectedCategory,
-                        questions: questions,
-                        answers: answers,
-                        score: score
-                    });
-                }
-            }, [answers, score, questions, selectedCategory]);
-
-            // Initial Filter Logic (Only runs if not restoring from save)
-            useEffect(() => {
-                if (!selectedCategory || questions.length > 0) return; // If restoring, questions are already set
+                if (!selectedCategory) return;
                 let filtered = [...ALL_QUESTIONS];
                 if (selectedCategory !== 'all') {
                     filtered = filtered.filter(q => q.category === selectedCategory);
@@ -1254,7 +1186,7 @@
             );
         };
 
-        const FullQuizModule = ({ user, onBack, onComplete, isResume = false }) => {
+        const FullQuizModule = ({ user, onBack, onComplete }) => {
             const [selectedCategory, setSelectedCategory] = useState(null); 
             const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
             const [answers, setAnswers] = useState({});
@@ -1264,28 +1196,8 @@
             const [showConfetti, setShowConfetti] = useState(false);
             const [isSubmitting, setIsSubmitting] = useState(false);
 
-            // Handle Init (Restore or Fresh)
             useEffect(() => {
-                if (isResume) {
-                    const savedData = LocalDB.getQuizProgress();
-                    if (savedData) {
-                        setSelectedCategory(savedData.category);
-                        setQuestions(savedData.questions);
-                        setAnswers(savedData.answers);
-                        setCurrentQuestionIndex(savedData.currentQuestionIndex);
-                        setIsAnswered(savedData.isAnswered);
-                    } else {
-                        // Fallback if no save found
-                        alert("找不到存檔，開始新測驗");
-                    }
-                } else {
-                    // Start Fresh: Clear old save
-                    LocalDB.clearQuizProgress();
-                }
-            }, [isResume]);
-
-            useEffect(() => {
-                if (!selectedCategory || (isResume && questions.length > 0)) return;
+                if (!selectedCategory) return;
                 let filtered = [...ALL_QUESTIONS];
                 if (selectedCategory !== 'all') {
                     filtered = filtered.filter(q => q.category === selectedCategory);
@@ -1296,19 +1208,6 @@
                 setAnswers({});
                 setIsAnswered(false);
             }, [selectedCategory]);
-
-            // Auto Save
-            useEffect(() => {
-                if (selectedCategory && questions.length > 0) {
-                    LocalDB.saveQuizProgress({
-                        category: selectedCategory,
-                        questions: questions,
-                        answers: answers,
-                        currentQuestionIndex: currentQuestionIndex,
-                        isAnswered: isAnswered
-                    });
-                }
-            }, [answers, currentQuestionIndex, isAnswered, questions, selectedCategory]);
 
             useEffect(() => {
                 const favSet = LocalDB.getFavorites();
@@ -1375,9 +1274,6 @@
                             });
                         }
                     }
-
-                    // Clear progress on completion
-                    LocalDB.clearQuizProgress();
 
                     onComplete({ score: Math.round((score / questions.length) * 100), details });
                 } catch (error) {
@@ -1687,7 +1583,6 @@
             const [view, setView] = useState('auth'); 
             const [loading, setLoading] = useState(true);
             const [quizResult, setQuizResult] = useState(null);
-            const [quizParams, setQuizParams] = useState({});
 
             useEffect(() => {
                 const checkLogin = () => {
@@ -1704,18 +1599,13 @@
                 checkLogin();
             }, []);
 
-            const handleNavigate = (page, params = {}) => {
-                setView(page);
-                setQuizParams(params);
-            };
-
             if (loading) return <LoadingScreen />;
 
             if (view === 'auth') return <AuthScreen onLogin={(u) => { setUser(u); setView('dashboard'); }} />;
-            if (view === 'dashboard') return <Dashboard user={user} onLogout={() => { setUser(null); setView('auth'); }} onNavigate={handleNavigate} />;
+            if (view === 'dashboard') return <Dashboard user={user} onLogout={() => { setUser(null); setView('auth'); }} onNavigate={setView} />;
             if (view === 'learn') return <LearningModule onBack={() => setView('dashboard')} />;
             if (view === 'quiz_setup') {
-                return <FullQuizModule user={user} onBack={() => setView('dashboard')} onComplete={(res) => { setQuizResult(res); setView('quiz_result'); }} isResume={quizParams.resume} />;
+                return <FullQuizModule user={user} onBack={() => setView('dashboard')} onComplete={(res) => { setQuizResult(res); setView('quiz_result'); }} />;
             }
             if (view === 'quick_quiz') return <QuickQuizModule onBack={() => setView('dashboard')} />;
             if (view === 'quiz_result') return <ResultReview result={quizResult} onExit={() => setView('dashboard')} />;
