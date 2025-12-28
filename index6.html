@@ -78,13 +78,14 @@
         import { 
             BookOpen, PenTool, History, Heart, AlertCircle, CheckCircle, XCircle, 
             ChevronRight, LogOut, User, ArrowLeft, Zap, Volume2, Home, LayoutGrid, 
-            Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, Download, ImageOff,
+            Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, ImageOff,
             Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw, Award
         } from 'lucide-react';
 
         // --- LocalStorage Database Helper ---
-        // 前綴已設定為 Chinese3-L7-2_ 以區隔資料
+        // 修改前綴為 Chinese3-L7-2
         const PREFIX = 'Chinese3-L7-2_';
+        
         const STORAGE_KEYS = {
             USER: PREFIX + 'user', 
             HISTORY: PREFIX + 'history',
@@ -178,7 +179,7 @@
             }
         };
         
-        // --- Global Data Definitions (With Local Image Paths) ---
+        // --- Global Data Definitions ---
         const STUDY_CONTENT = {
             intro: {
                 title: "形音義補充與辨析",
@@ -200,56 +201,56 @@
             grammar: {
                 title: "字義整理、詞語注釋與辨析",
                 table: [
-                    { char: "為", sent: "釋之「為」廷尉", mean: "當、擔任 (動詞)", image: "images/official_serving_as_judge.jpg" },
-                    { char: "為", sent: "一傾而天下用法皆「為」輕重", mean: "因為 (介詞)", image: "images/scales_of_justice_tipping.jpg" },
-                    { char: "行", sent: "上「行」，出中渭橋", mean: "出巡 (動詞)", image: "images/emperor_touring_inspection.jpg" },
-                    { char: "行", sent: "以為「行」已過", mean: "隊伍 (名詞)", image: "images/imperial_procession_troops.jpg" },
-                    { char: "下", sent: "從橋「下」走出 / 匿橋「下」", mean: "低處、底部 (名詞)", image: "images/hiding_under_bridge.jpg" },
-                    { char: "下", sent: "今既「下」廷尉", mean: "上位者交付任務給下位者 (動詞)", image: "images/handing_down_orders.jpg" },
-                    { char: "使", sent: "於是「使」騎捕", mean: "派遣 (動詞) *另有一說，解釋為「派人」，作「動詞」用。", image: "images/dispatching_cavalry.jpg" },
-                    { char: "使", sent: "上「使」立誅之則已", mean: "假使 (連詞)", image: "images/execution_order.jpg" },
+                    { char: "為", sent: "釋之「為」廷尉", mean: "當、擔任 (動詞)", image: "images/grammar_wei1.jpg" },
+                    { char: "為", sent: "一傾而天下用法皆「為」輕重", mean: "因為 (介詞)", image: "images/grammar_wei2.jpg" },
+                    { char: "行", sent: "上「行」，出中渭橋", mean: "出巡 (動詞)", image: "images/grammar_xing1.jpg" },
+                    { char: "行", sent: "以為「行」已過", mean: "隊伍 (名詞)", image: "images/grammar_xing2.jpg" },
+                    { char: "下", sent: "從橋「下」走出 / 匿橋「下」", mean: "低處、底部 (名詞)", image: "images/grammar_xia1.jpg" },
+                    { char: "下", sent: "今既「下」廷尉", mean: "上位者交付任務給下位者 (動詞)", image: "images/grammar_xia2.jpg" },
+                    { char: "使", sent: "於是「使」騎捕", mean: "派遣 (動詞) *另有一說，解釋為「派人」，作「動詞」用。", image: "images/grammar_shi1.jpg" },
+                    { char: "使", sent: "上「使」立誅之則已", mean: "假使 (連詞)", image: "images/grammar_shi2.jpg" },
                     { char: "之", sent: "久「之」，以為行已過", mean: "無義 (助詞)" },
                     { char: "之", sent: "而廷尉乃當「之」罰金 / 屬「之」廷尉 / 上使立誅「之」則已", mean: "指縣人/人犯 (代詞)" },
                     { char: "之", sent: "今法如此而更重「之」", mean: "指罪 (代詞)" },
                     { char: "之", sent: "廷尉，天下「之」平也", mean: "的 (助詞) *教育部重編國語辭典修訂本將「之」解釋為「的」，作介詞用。" },
                     { char: "之", sent: "唯陛下察「之」", mean: "指犯罪的事 (代詞)" },
-                    { char: "當", sent: "人犯蹕，「當」罰金", mean: "判處 (動詞) *另有一說，解釋為「應當」，作「副詞」用。", image: "images/judge_sentencing_fine.jpg" },
-                    { char: "當", sent: "廷尉乃「當」之罰金", mean: "判處 (動詞)", image: "images/announcing_verdict.jpg" }, 
+                    { char: "當", sent: "人犯蹕，「當」罰金", mean: "判處 (動詞) *另有一說，解釋為「應當」，作「副詞」用。", image: "images/grammar_dang1.jpg" },
+                    { char: "當", sent: "廷尉乃「當」之罰金", mean: "判處 (動詞)", image: "images/grammar_dang2.jpg" }, 
                     { char: "當", sent: "奏「當」 / 廷尉「當」是也", mean: "判決/判決的結果 (名詞)" },
                     { char: "當", sent: "「當」是也 / 「當」省則省", mean: "應該、應當 (副詞)" },
-                    { char: "是", sent: "「是」法不信於民也", mean: "此、這 (代詞) *另有一說將「是」作為「指示形容詞」，用來形容「法」。", image: "images/pointing_at_law.jpg" },
-                    { char: "是", sent: "廷尉當「是」也", mean: "正確的 (形容詞)", image: "images/emperor_approving_judgment.jpg" },
-                    { char: "是", sent: "「是」可忍，孰不可忍", mean: "此、這 (代詞) *(如果這都可以容忍，那還有什麼是無法容忍的。表示對某事已忍無可忍。)" },
+                    { char: "是", sent: "「是」法不信於民也", mean: "此、這 (代詞) *另有一說將「是」作為「指示形容詞」，用來形容「法」。", image: "images/grammar_shi_this.jpg" },
+                    { char: "是", sent: "廷尉當「是」也", mean: "正確的 (形容詞)", image: "images/grammar_shi_correct.jpg" },
+                    { char: "是", sent: "「是」可忍，孰不可忍", mean: "此、這 (代詞) *(如果這都可以容忍，那還有什麼是無法容忍的。表示對某事已忍無可忍。)", },
                     { char: "唯", sent: "「唯」陛下察之", mean: "希望 (副詞)" },
                     { char: "唯", sent: "「唯」利是圖", mean: "獨、只有 (副詞)" },
-                    { char: "親", sent: "此人「親」驚吾馬", mean: "親自 (副詞)", image: "images/person_startling_horse.jpg" },
-                    { char: "親", sent: "人人「親」其親，長其長，則天下平。", mean: "親愛 (動詞) *(每個人都愛自己的親人，尊重自己的長輩，那天下就會安寧。)", image: "images/loving_family_elders.jpg" }
+                    { char: "親", sent: "此人「親」驚吾馬", mean: "親自 (副詞)", image: "images/grammar_qin1.jpg" },
+                    { char: "親", sent: "人人「親」其親，長其長，則天下平。", mean: "親愛 (動詞) *(每個人都愛自己的親人，尊重自己的長輩，那天下就會安寧。)", image: "images/grammar_qin2.jpg" }
                 ],
                 vocab: [
-                    { text: "於是使「騎」捕", mean: "騎兵 (名詞)", image: "images/grammar_vocab_0.jpg" },
-                    { text: "「匿」橋下", mean: "隱藏 (動詞)", image: "images/grammar_vocab_1.jpg" },
-                    { text: "「即」出 / 「即」走耳", mean: "便、就 (副詞)", image: "images/grammar_vocab_2.jpg" },
-                    { text: "即走「耳」", mean: "矣、了 (助詞)", image: "images/grammar_vocab_3.jpg" },
-                    { text: "法「者」", mean: "助詞，用於句中，表示停頓。", image: "images/grammar_vocab_4.jpg" },
-                    { text: "如此「而」更重之", mean: "卻 (連詞)。亦可作「假如」。", image: "images/grammar_vocab_5.jpg" },
-                    { text: "更「重」之", mean: "加重 (動詞)", image: "images/grammar_vocab_6.jpg" },
-                    { text: "「良」久", mean: "很、甚、極 (副詞)", image: "images/grammar_vocab_7.jpg" },
-                    { text: "一傾而「天下」用法...", mean: "指天下執行法律者 (名詞)", image: "images/grammar_vocab_8.jpg" },
-                    { text: "用法皆為輕重", mean: "原句「用法皆為之輕重」，省略「之」字，指執法偏斜不正。", image: "images/grammar_vocab_9.jpg" }
+                    { text: "於是使「騎」捕", mean: "騎兵 (名詞)" },
+                    { text: "「匿」橋下", mean: "隱藏 (動詞)" },
+                    { text: "「即」出 / 「即」走耳", mean: "便、就 (副詞)" },
+                    { text: "即走「耳」", mean: "矣、了 (助詞)" },
+                    { text: "法「者」", mean: "助詞，用於句中，表示停頓。" },
+                    { text: "如此「而」更重之", mean: "卻 (連詞)。亦可作「假如」。" },
+                    { text: "更「重」之", mean: "加重 (動詞)" },
+                    { text: "「良」久", mean: "很、甚、極 (副詞)" },
+                    { text: "一傾而「天下」用法...", mean: "指天下執行法律者 (名詞)" },
+                    { text: "用法皆為輕重", mean: "原句「用法皆為之輕重」，省略「之」字，指執法偏斜不正。" }
                 ],
                 phrases: [
-                    { title: "「走」字辨析", content: "見乘輿車騎即「走」耳：奔跑，動詞。 / 販夫「走」卒：走動的，形容詞。(「販夫」指做小買賣的人，「走卒」指替人跑腿或當差的小吏。販夫走卒指生活在下層的老百姓。)", image: "images/grammar_phrase_0.jpg" },
-                    { title: "被動句 (介詞「於」)", content: "是法不信「於」民也：被。【被動句】 / 先發制人，後發制「於」人：被。【被動句】 / 己所不欲，勿施「於」人：給。 / 千里之行，始「於」足下：從、自。 / 蜀道難，難「於」上青天：比。", image: "images/grammar_phrase_1.jpg" },
-                    { title: "被動句 (「為」)", content: "二蟲盡「為」所吞：被。【被動句】", image: "images/grammar_phrase_2.jpg" }
+                    { title: "「走」字辨析", content: "見乘輿車騎即「走」耳：奔跑，動詞。 / 販夫「走」卒：走動的，形容詞。(「販夫」指做小買賣的人，「走卒」指替人跑腿或當差的小吏。販夫走卒指生活在下層的老百姓。)" },
+                    { title: "被動句 (介詞「於」)", content: "是法不信「於」民也：被。【被動句】 / 先發制人，後發制「於」人：被。【被動句】 / 己所不欲，勿施「於」人：給。 / 千里之行，始「於」足下：從、自。 / 蜀道難，難「於」上青天：比。" },
+                    { title: "被動句 (「為」)", content: "二蟲盡「為」所吞：被。【被動句】" }
                 ]
             },
             structure: {
                 title: "課文結構表",
                 stages: [
-                    { name: "1. 案情 (第一至二段)", desc: "皇帝出巡 —— 路人驚動皇帝座車。犯人口供 —— 犯蹕乃無心之過。張釋之判決 —— 當罰金。", image: "images/case_incident_bridge.jpg" },
-                    { name: "2. 皇帝反應 (第三段)", desc: "對判決不滿而發怒，認為罪當加重。", image: "images/emperor_angry.jpg" },
-                    { name: "3. 張釋之據理力爭", desc: "法律之前，人人平等。執法者皆須依法公正判決。", image: "images/zhang_shizhi_arguing.jpg" },
-                    { name: "4. 結果 (第四段)", desc: "漢文帝從善如流 —— 認同張釋之的判決。", image: "images/emperor_accepts_advice.jpg" }
+                    { name: "1. 案情 (第一至二段)", desc: "皇帝出巡 —— 路人驚動皇帝座車。犯人口供 —— 犯蹕乃無心之過。張釋之判決 —— 當罰金。", image: "images/structure_1.jpg" },
+                    { name: "2. 皇帝反應 (第三段)", desc: "對判決不滿而發怒，認為罪當加重。", image: "images/structure_2.jpg" },
+                    { name: "3. 張釋之據理力爭", desc: "法律之前，人人平等。執法者皆須依法公正判決。", image: "images/structure_3.jpg" },
+                    { name: "4. 結果 (第四段)", desc: "漢文帝從善如流 —— 認同張釋之的判決。", image: "images/structure_4.jpg" }
                 ],
                 exam: {
                     text: "「少了史記，這個歷史會少掉多少故事？會少掉多少可歌可泣的人物？而那在韓信落魄時給他一碗飯吃的漂母，使我不敢小看在河邊漂洗衣服的無名女人。那和屈原對話的漁父，也使我相信捕魚人中有大智若愚的隱者。史記書寫了主流價值之外的另一種信仰。」",
@@ -261,50 +262,50 @@
             idioms: {
                 title: "出自史記的成語",
                 items: [
-                    { name: "吐哺握髮", mean: "原指熱情接待賢士。後用以形容求賢若渴。", source: "語出《史記・魯周公世家》：「周公戒伯禽曰：『我於天下亦不賤矣。然我一沐三握髮，一飯三吐哺，起以待士，猶恐失天下之賢人。』」", image: "images/duke_zhou_greeting_guest.jpg" },
-                    { name: "利令智昏", mean: "形容因貪利而失去了理智，是非不辨。", source: "語出《史記・平原君虞卿列傳》：「太史公曰：平原君，翩翩濁世之佳公子也，然未睹大體。鄙語曰：『利令智昏』………………。」", image: "images/blinded_by_gain.jpg" },
-                    { name: "助紂為虐", mean: "比喻幫助壞人做壞事。", source: "語出《史記・留侯世家》：「今始入秦，即安其樂，此所謂助桀為虐。」", image: "images/helping_tyrant.jpg" },
-                    { name: "肝腦塗地", mean: "原指死得很慘，後來也指甘作一切犧牲來報答別人的恩德或表示忠誠。", source: "語出《史記・劉敬叔孫通列傳》：「大戰七十，小戰四十，使天下之民肝腦塗地。」", image: "images/loyal_soldier_sacrifice.jpg" },
-                    { name: "奇貨可居", mean: "比喻仗持某種專長或有利用價值的東西作為資本以謀利。", source: "語出《史記・呂不韋列傳》：「子楚，秦諸庶孽孫，質於諸侯，車乘進用不饒，居處困，不得意。呂不韋賈邯鄲，見而憐之，曰：『此奇貨可居。』」", image: "images/hoarding_rare_goods.jpg" },
-                    { name: "背水一戰", mean: "比喻決一死戰。", source: "語出《史記・淮陰侯列傳》：「(韓)信乃使萬人先行，出，背水陣。………………軍皆殊死戰，不可敗。」", image: "images/fight_with_back_to_river.jpg" },
-                    { name: "韋編三絕", mean: "指勤奮讀書。", source: "語出《史記・孔子世家》：「孔子晚而喜易………………讀易，韋編三絕。」", image: "images/reading_diligently.jpg" },
-                    { name: "人為刀俎，我為魚肉", mean: "比喻自己受制於人，處於任人擺弄的境況。俎，割肉用的砧板。", source: "語出《史記・項羽本紀》：「樊噲曰：『大行不顧細謹，大禮不辭小讓。如今人方為刀俎，我為魚肉，何辭為！』」", image: "images/chopping_block_and_meat.jpg" },
-                    { name: "破釜沉舟", mean: "今多用以形容一往直前、視死如歸、義無反顧的精神。", source: "語出《史記・項羽本紀》：「乃悉引兵渡河，皆沉船，破釜甑，燒廬舍，持三日糧，以示士卒必死，無一還心。」", image: "images/breaking_cauldrons_sinking_boats.jpg" },
-                    { name: "三令五申", mean: "再三叮嚀告誡。", source: "語出《史記・孫子吳起列傳》：「約束既布，乃設鉄鉞，即三令五申之。」(鉄鉞，刑具，比喻刑戮。)", image: "images/repeated_orders.jpg" },
-                    { name: "約法三章", mean: "漢高祖劉邦初入咸陽，臨時制定三條法律，與民共守。泛指事先約好或規定的事。", source: "語出《史記・高祖本紀》：「與父老約，法三章耳：殺人者死，傷人及盜抵罪。」", image: "images/three_simple_laws.jpg" },
-                    { name: "一諾千金", mean: "形容承諾信用高，一旦許諾別人，必定做到。", source: "語本《史記・季布傳》：「楚人諺曰：『得黃金百斤，不如得季布一諾。』」", image: "images/promise_gold.jpg" },
-                    { name: "一決雌雄", mean: "比喻互相較量以決定勝敗、高下。", source: "語本《史記・項羽本紀》：「天下匈匈數歲者，徒以吾兩人耳，願與漢王挑戰，決雌雄，毋徒苦天下之民父子為也。」", image: "images/decisive_battle.jpg" },
-                    { name: "雞鳴狗盜", mean: "比喻有某種卑下技能的人，或指卑微的技能。", source: "典出《史記・孟嘗君列傳》：戰國時秦昭王囚孟嘗君，打算加以殺害。孟嘗君的門客，一個裝狗入秦宮偷狐白裘，另一個學雞叫使函谷關關門早開，孟嘗君因此而脫難。", image: "images/rooster_crow_dog_snatch.jpg" },
-                    { name: "毛遂自荐", mean: "比喻自告奮勇，自我推荐。", source: "典出《史記・平原君虞卿列傳》：戰國時，秦兵圍攻趙國，平原君至楚求救，其門下食客毛遂自荐前往，並說服楚王同意趙楚合縱。", image: "images/recommending_oneself.jpg" }
+                    { name: "吐哺握髮", mean: "原指熱情接待賢士。後用以形容求賢若渴。", source: "語出《史記・魯周公世家》：「周公戒伯禽曰：『我於天下亦不賤矣。然我一沐三握髮，一飯三吐哺，起以待士，猶恐失天下之賢人。』」" },
+                    { name: "利令智昏", mean: "形容因貪利而失去了理智，是非不辨。", source: "語出《史記・平原君虞卿列傳》：「太史公曰：平原君，翩翩濁世之佳公子也，然未睹大體。鄙語曰：『利令智昏』………………。」" },
+                    { name: "助紂為虐", mean: "比喻幫助壞人做壞事。", source: "語出《史記・留侯世家》：「今始入秦，即安其樂，此所謂助桀為虐。」" },
+                    { name: "肝腦塗地", mean: "原指死得很慘，後來也指甘作一切犧牲來報答別人的恩德或表示忠誠。", source: "語出《史記・劉敬叔孫通列傳》：「大戰七十，小戰四十，使天下之民肝腦塗地。」" },
+                    { name: "奇貨可居", mean: "比喻仗持某種專長或有利用價值的東西作為資本以謀利。", source: "語出《史記・呂不韋列傳》：「子楚，秦諸庶孽孫，質於諸侯，車乘進用不饒，居處困，不得意。呂不韋賈邯鄲，見而憐之，曰：『此奇貨可居。』」" },
+                    { name: "背水一戰", mean: "比喻決一死戰。", source: "語出《史記・淮陰侯列傳》：「(韓)信乃使萬人先行，出，背水陣。………………軍皆殊死戰，不可敗。」" },
+                    { name: "韋編三絕", mean: "指勤奮讀書。", source: "語出《史記・孔子世家》：「孔子晚而喜易………………讀易，韋編三絕。」" },
+                    { name: "人為刀俎，我為魚肉", mean: "比喻自己受制於人，處於任人擺弄的境況。俎，割肉用的砧板。", source: "語出《史記・項羽本紀》：「樊噲曰：『大行不顧細謹，大禮不辭小讓。如今人方為刀俎，我為魚肉，何辭為！』」" },
+                    { name: "破釜沉舟", mean: "今多用以形容一往直前、視死如歸、義無反顧的精神。", source: "語出《史記・項羽本紀》：「乃悉引兵渡河，皆沉船，破釜甑，燒廬舍，持三日糧，以示士卒必死，無一還心。」" },
+                    { name: "三令五申", mean: "再三叮嚀告誡。", source: "語出《史記・孫子吳起列傳》：「約束既布，乃設鉄鉞，即三令五申之。」(鉄鉞，刑具，比喻刑戮。)" },
+                    { name: "約法三章", mean: "漢高祖劉邦初入咸陽，臨時制定三條法律，與民共守。泛指事先約好或規定的事。", source: "語出《史記・高祖本紀》：「與父老約，法三章耳：殺人者死，傷人及盜抵罪。」" },
+                    { name: "一諾千金", mean: "形容承諾信用高，一旦許諾別人，必定做到。", source: "語本《史記・季布傳》：「楚人諺曰：『得黃金百斤，不如得季布一諾。』」" },
+                    { name: "一決雌雄", mean: "比喻互相較量以決定勝敗、高下。", source: "語本《史記・項羽本紀》：「天下匈匈數歲者，徒以吾兩人耳，願與漢王挑戰，決雌雄，毋徒苦天下之民父子為也。」" },
+                    { name: "雞鳴狗盜", mean: "比喻有某種卑下技能的人，或指卑微的技能。", source: "典出《史記・孟嘗君列傳》：戰國時秦昭王囚孟嘗君，打算加以殺害。孟嘗君的門客，一個裝狗入秦宮偷狐白裘，另一個學雞叫使函谷關關門早開，孟嘗君因此而脫難。" },
+                    { name: "毛遂自荐", mean: "比喻自告奮勇，自我推荐。", source: "典出《史記・平原君虞卿列傳》：戰國時，秦兵圍攻趙國，平原君至楚求救，其門下食客毛遂自荐前往，並說服楚王同意趙楚合縱。" }
                 ]
             },
             law: {
                 title: "法律相關成語與名言",
                 idioms: [
-                    { text: "(一) 嚴刑峻法", mean: "嚴厲的刑法。", image: "images/law_idiom_0.jpg" },
-                    { text: "(二) 繩之以法", mean: "指以法律制裁罪犯。", image: "images/law_idiom_1.jpg" },
-                    { text: "(三) 貪贓枉法", mean: "指貪汙受賄，破壞法紀。", image: "images/law_idiom_2.jpg" },
-                    { text: "(四) 就地正法", mean: "在犯罪所在地執行死刑。", image: "images/law_idiom_3.jpg" },
-                    { text: "(五) 目無法紀", mean: "膽大妄為，無視於法律的存在。", image: "images/law_idiom_4.jpg" },
-                    { text: "(六) 奉公守法", mean: "以公事為重，謹守法紀，不徇私舞弊。", image: "images/law_idiom_5.jpg" },
-                    { text: "(七) 作法自斃", mean: "自己訂立的法規，反而使自己受害。比喻自作自受。", image: "images/law_idiom_6.jpg" },
-                    { text: "(八) 以身試法", mean: "原指故意違反法令，以考驗為政者執行律令的能力與決心，後專指某人無視於法律的制裁而故意犯法。", image: "images/law_idiom_7.jpg" },
-                    { text: "(九) 對簿公堂", mean: "原被告雙方在法庭上公開審問、爭訟，以辨是非。", image: "images/law_idiom_8.jpg" },
-                    { text: "(十) 毋枉毋縱", mean: "不要冤枉好人，也不要縱容壞人。", image: "images/law_idiom_9.jpg" }
+                    { text: "(一) 嚴刑峻法", mean: "嚴厲的刑法。" },
+                    { text: "(二) 繩之以法", mean: "指以法律制裁罪犯。" },
+                    { text: "(三) 貪贓枉法", mean: "指貪汙受賄，破壞法紀。" },
+                    { text: "(四) 就地正法", mean: "在犯罪所在地執行死刑。" },
+                    { text: "(五) 目無法紀", mean: "膽大妄為，無視於法律的存在。" },
+                    { text: "(六) 奉公守法", mean: "以公事為重，謹守法紀，不徇私舞弊。" },
+                    { text: "(七) 作法自斃", mean: "自己訂立的法規，反而使自己受害。比喻自作自受。" },
+                    { text: "(八) 以身試法", mean: "原指故意違反法令，以考驗為政者執行律令的能力與決心，後專指某人無視於法律的制裁而故意犯法。" },
+                    { text: "(九) 對簿公堂", mean: "原被告雙方在法庭上公開審問、爭訟，以辨是非。" },
+                    { text: "(十) 毋枉毋縱", mean: "不要冤枉好人，也不要縱容壞人。" }
                 ],
                 quotes: [
-                    { text: "立法明分，而不以私害法，則治。", author: "(戰國 商鞅)", image: "images/law_quote_0.jpg" },
-                    { text: "刑過不避大臣，賞善不遺匹夫。", author: "(韓非子)", image: "images/law_quote_1.jpg" },
-                    { text: "法者，輔治之具，當以教化為先。", author: "(明代 薛瑄)", image: "images/law_quote_2.jpg" },
-                    { text: "治將亂之國，當用重典；治久亂之國，宜予生路。", author: "(清代 曾國藩)", image: "images/law_quote_3.jpg" },
-                    { text: "國家愈腐化，法律愈多。", author: "(古羅馬 泰西塔斯)", image: "images/law_quote_4.jpg" },
-                    { text: "莫聽片面之詞而判決。", author: "(日本諺語)", image: "images/law_quote_5.jpg" },
-                    { text: "法律少而受到嚴格遵守的國家，才能治理得更好。", author: "(法國 笛卡兒)", image: "images/law_quote_6.jpg" },
-                    { text: "對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。", author: "(法國 雨果)", image: "images/law_quote_7.jpg" },
-                    { text: "人民的安全是最高的法律。", author: "(英國 培根)", image: "images/law_quote_8.jpg" },
-                    { text: "執法重於立法。", author: "(美國 傑佛遜)", image: "images/law_quote_9.jpg" },
-                    { text: "法律是顯露的道德，道德是隱藏的法律。", author: "(美國 林肯)", image: "images/law_quote_10.jpg" },
-                    { text: "太寬容的法律無人遵守，太嚴格的法律難以厲行。", author: "(美國 富蘭克林)", image: "images/law_quote_11.jpg" }
+                    { text: "立法明分，而不以私害法，則治。", author: "(戰國 商鞅)" },
+                    { text: "刑過不避大臣，賞善不遺匹夫。", author: "(韓非子)" },
+                    { text: "法者，輔治之具，當以教化為先。", author: "(明代 薛瑄)" },
+                    { text: "治將亂之國，當用重典；治久亂之國，宜予生路。", author: "(清代 曾國藩)" },
+                    { text: "國家愈腐化，法律愈多。", author: "(古羅馬 泰西塔斯)" },
+                    { text: "莫聽片面之詞而判決。", author: "(日本諺語)" },
+                    { text: "法律少而受到嚴格遵守的國家，才能治理得更好。", author: "(法國 笛卡兒)" },
+                    { text: "對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。", author: "(法國 雨果)" },
+                    { text: "人民的安全是最高的法律。", author: "(英國 培根)" },
+                    { text: "執法重於立法。", author: "(美國 傑佛遜)" },
+                    { text: "法律是顯露的道德，道德是隱藏的法律。", author: "(美國 林肯)" },
+                    { text: "太寬容的法律無人遵守，太嚴格的法律難以厲行。", author: "(美國 富蘭克林)" }
                 ]
             }
         };
@@ -405,7 +406,7 @@
             q.push({ id: id++, category: "史記成語", question: "「三令五申」的意思是？", options: ["再三叮嚀告誡", "三個命令五個申請", "軍隊編制", "很多法令"], answer: "再三叮嚀告誡", explanation: "孫武訓練宮女時，多次下達命令與說明。形容再三叮嚀告誡。" });
             q.push({ id: id++, category: "史記成語", question: "「約法三章」泛指什麼？", options: ["事先約好或規定的事", "三章法律", "寫文章", "法律很嚴格"], answer: "事先約好或規定的事", explanation: "劉邦入關中，與百姓約定只保留三條法律。後泛指事先約好的規定。" });
             q.push({ id: id++, category: "史記成語", question: "「一諾千金」形容什麼？", options: ["承諾信用高", "很有錢", "黃金很重", "賄賂"], answer: "承諾信用高", explanation: "季布極守信用，楚人說得季布一句承諾，勝過得到百斤黃金。形容信用極高。" });
-            q.push({ id: id++, category: "史記成語", question: "「一決雌雄」的意思是？", options: ["比喻互相較量以決定勝敗", "分辨公母", "決定性別", "動物打架"], answer: "比喻互相較量以決定勝敗", explanation: "指雙方互相較量，以決定高下、勝負。" });
+            q.push({ id: id++, category: "史記成語", question: "「一決雌雄」的意思是？", options: ["比喻互相較量以決定勝敗、高下。", "分辨公母", "決定性別", "動物打架"], answer: "比喻互相較量以決定勝敗", explanation: "指雙方互相較量，以決定高下、勝負。" });
             q.push({ id: id++, category: "史記成語", question: "「雞鳴狗盜」比喻什麼？", options: ["有卑下技能的人", "養雞養狗", "偷雞摸狗", "熱鬧的景象"], answer: "有卑下技能的人", explanation: "孟嘗君的食客裝狗偷裘、學雞叫騙開城門，助其脫困。比喻有某種卑下技能的人，或指卑微的技能。" });
             q.push({ id: id++, category: "史記成語", question: "「毛遂自荐」的意思是？", options: ["自告奮勇", "推薦毛筆", "自我反省", "放棄機會"], answer: "自告奮勇", explanation: "毛遂自我推薦隨平原君出使楚國。比喻自告奮勇，自我推薦。" });
 
@@ -952,7 +953,7 @@
             );
         };
 
-        // --- UPDATED LearningModule with AI & Download ---
+        // --- UPDATED LearningModule with Local Images ---
         const LearningModule = ({ onBack }) => {
             const [activeTab, setActiveTab] = useState('intro'); 
             
@@ -964,19 +965,16 @@
                 { id: 'law', label: '法律名言' },
             ];
 
-            // Helper to render image or placeholder with Generate Button
-            const renderImageSection = (src, alt) => {
-                // If no image, return nothing (or placeholder if desired, but user asked for local images)
-                if (!src) return null;
-
-                // Simply render the image from local path
+            // Helper to render local image or hide if failed
+            const renderImageSection = (src, alt, uniqueKey) => {
+                // If local image exists, show it
                 return (
-                    <div className="mt-4 border-t border-dashed border-stone-200 pt-4 flex flex-col gap-3">
+                    <div className="mt-4 border-t border-dashed border-stone-200 pt-4">
                         <img 
                             src={src} 
                             alt={alt} 
                             className="w-full h-auto rounded-lg shadow-sm" 
-                            onError={(e) => e.target.style.display = 'none'} // Hide if missing
+                            onError={(e) => e.target.style.display = 'none'}
                         />
                     </div>
                 );
@@ -984,7 +982,7 @@
 
             return (
                 <div className="h-full flex flex-col">
-                    <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+                    <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center sticky top-0 z-10">
                         <div className="flex items-center">
                             <button onClick={onBack} className="flex items-center text-stone-600 hover:text-orange-600">
                                 <ArrowLeft className="w-5 h-5 mr-1" /> 返回
@@ -1075,14 +1073,13 @@
                                                             <td className="px-4 py-3 whitespace-nowrap font-bold text-stone-800 align-top text-lg">{row.char}</td>
                                                             <td className="px-4 py-3 text-stone-700 align-top text-base leading-relaxed">{row.sent}</td>
                                                             <td className="px-4 py-3 align-top min-w-[240px]">
-                                                                {/* Modified: Added styling container for Meaning text to separate it from image */}
                                                                 <div className="inline-block bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2 mb-2 shadow-sm">
                                                                     <span className="font-bold text-indigo-700 text-base">
                                                                         {row.mean}
                                                                     </span>
                                                                 </div>
                                                                 <div className="-mt-2">
-                                                                    {renderImageSection(row.image, row.char)}
+                                                                    {row.image && renderImageSection(row.image, row.char, `grammar_table_${i}`)}
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1092,7 +1089,6 @@
                                         </div>
                                     </div>
 
-                                    {/* 新增：重點詞語注釋區塊 */}
                                     <div>
                                         <h4 className="text-lg font-bold text-teal-700 mb-3 bg-teal-50 p-2 rounded w-fit flex items-center">
                                             <List className="w-5 h-5 mr-2"/> 重點詞語注釋
@@ -1102,7 +1098,7 @@
                                                 <div key={i} className="bg-white border border-teal-100 p-4 rounded-lg shadow-sm">
                                                     <h5 className="font-bold text-teal-800 mb-1">{item.text}</h5>
                                                     <p className="text-stone-700">{item.mean}</p>
-                                                    {renderImageSection(item.image, item.text)}
+                                                    {renderImageSection(`images/grammar_vocab_${i}.jpg`, item.text, `grammar_vocab_${i}`)}
                                                 </div>
                                             ))}
                                         </div>
@@ -1115,7 +1111,7 @@
                                                 <div key={i} className="bg-white border border-rose-100 p-4 rounded-lg shadow-sm">
                                                     <h5 className="font-bold text-rose-800 mb-2">{item.title}</h5>
                                                     <p className="text-stone-700">{item.content}</p>
-                                                    {renderImageSection(item.image, item.title)}
+                                                    {renderImageSection(`images/grammar_phrase_${i}.jpg`, item.title, `grammar_phrase_${i}`)}
                                                 </div>
                                             ))}
                                         </div>
@@ -1135,7 +1131,7 @@
                                                     <p className="text-stone-700 leading-relaxed text-lg">{stage.desc}</p>
                                                 </div>
                                                 <div className="w-full md:w-1/3">
-                                                    {renderImageSection(stage.image, stage.name)}
+                                                    {renderImageSection(stage.image, stage.name, `structure_stage_${i}`)}
                                                 </div>
                                             </div>
                                         ))}
@@ -1170,7 +1166,7 @@
                                                 <div className="text-sm text-stone-500 bg-stone-50 p-3 rounded mb-4 border-l-2 border-emerald-200 italic">
                                                     出處：{item.source}
                                                 </div>
-                                                {renderImageSection(item.image, item.name)}
+                                                {renderImageSection(`images/idioms_shiji_${i}.jpg`, item.name, `idioms_${i}`)}
                                             </div>
                                         ))}
                                     </div>
@@ -1190,7 +1186,7 @@
                                                 <div key={i} className="bg-white border border-slate-200 p-4 rounded-lg flex flex-col">
                                                     <span className="font-bold text-lg text-slate-800 mb-1">{item.text}</span>
                                                     <span className="text-slate-600">{item.mean}</span>
-                                                    {renderImageSection(item.image, item.text)}
+                                                    {renderImageSection(`images/law_idiom_${i}.jpg`, item.text, `law_idiom_${i}`)}
                                                 </div>
                                             ))}
                                         </div>
@@ -1205,7 +1201,7 @@
                                                 <div key={i} className="bg-cyan-50/50 p-4 rounded-lg border-l-4 border-cyan-400">
                                                     <p className="text-stone-800 font-medium text-lg mb-2">"{quote.text}"</p>
                                                     <p className="text-cyan-700 text-sm font-bold text-right">— {quote.author}</p>
-                                                    {renderImageSection(quote.image, quote.author)}
+                                                    {renderImageSection(`images/law_quote_${i}.jpg`, quote.author, `law_quote_${i}`)}
                                                 </div>
                                             ))}
                                         </div>
