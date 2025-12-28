@@ -952,8 +952,7 @@
                                                         if (opt === q.answer) {
                                                             btnClass += "bg-emerald-500 text-white border-emerald-600 shadow-md transform scale-[1.01] z-10";
                                                         } else if (opt === answerState.selected && !isCorrect) {
-                                                            // Modified: Darker red background and border for incorrect answers
-                                                            btnClass += "bg-red-100 text-red-800 border-red-400 shadow-sm z-10";
+                                                            btnClass += "bg-red-50 text-red-700 border-red-200 opacity-80";
                                                         } else {
                                                             btnClass += "bg-stone-50 text-stone-400 border-stone-100 opacity-50";
                                                         }
@@ -1507,16 +1506,7 @@
                                 <h3 className="text-xl md:text-2xl font-bold text-stone-800 mb-8 leading-relaxed">{currentQ.question}</h3>
                                 <div className="space-y-3">{currentQ.options.map((opt, i) => {
                                     let statusClass = "border-stone-100 hover:border-stone-300 text-stone-700";
-                                    if (isAnswered) { 
-                                        if (opt === currentQ.answer) { 
-                                            statusClass = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold"; 
-                                        } else if (opt === answers[currentQ.id]) { 
-                                            // Modified: Darker red background and border for Full Quiz as well
-                                            statusClass = "border-red-600 bg-red-100 text-red-900 font-bold shadow-sm"; 
-                                        } else { 
-                                            statusClass = "border-stone-100 opacity-50"; 
-                                        } 
-                                    }
+                                    if (isAnswered) { if (opt === currentQ.answer) { statusClass = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold"; } else if (opt === answers[currentQ.id]) { statusClass = "border-red-500 bg-red-50 text-red-900"; } else { statusClass = "border-stone-100 opacity-50"; } }
                                     return (<button key={i} onClick={() => handleAnswer(opt)} disabled={isAnswered} className={`w-full text-left p-5 rounded-xl border-2 transition relative text-lg font-medium ${statusClass}`}><span className="inline-block w-6 font-bold text-stone-400 mr-2">{String.fromCharCode(65 + i)}.</span>{opt}{isAnswered && opt === currentQ.answer && <CheckCircle className="w-5 h-5 text-emerald-600 absolute right-4 top-1/2 -translate-y-1/2" />}{isAnswered && opt === answers[currentQ.id] && opt !== currentQ.answer && <XCircle className="w-5 h-5 text-red-600 absolute right-4 top-1/2 -translate-y-1/2" />}</button>);
                                 })}</div>
                             </div>

@@ -79,7 +79,7 @@
             BookOpen, PenTool, History, Heart, AlertCircle, CheckCircle, XCircle, 
             ChevronRight, LogOut, User, ArrowLeft, Zap, Volume2, Home, LayoutGrid, 
             Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, Download, ImageOff,
-            Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw, Award
+            Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw
         } from 'lucide-react';
 
         // --- API Key Configuration ---
@@ -238,7 +238,7 @@
             }
         };
         
-        // --- Global Data Definitions ---
+        // --- Global Data Definitions (Same as before) ---
         const STUDY_CONTENT = {
             intro: {
                 title: "形音義補充與辨析",
@@ -375,125 +375,125 @@
             
             // --- 1. 形音義與辨析 ---
             // 辯
-            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的動詞解釋為何？", options: ["分別、判別", "爭論是非曲直", "處理", "花片"], answer: "爭論是非曲直", explanation: "「辯」作動詞時，意指爭論是非曲直，如「辯駁」、「辯論」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的名詞解釋為何？", options: ["條狀物", "花片", "能言善道的", "車子"], answer: "能言善道的", explanation: "「辯」作名詞時，指有口才、能言善道的人，如「辯士」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的動詞解釋為何？", options: ["分別、判別", "爭論是非曲直", "處理", "花片"], answer: "爭論是非曲直" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辯」字(ㄅㄧㄢˋ)的名詞解釋為何？", options: ["條狀物", "花片", "能言善道的", "車子"], answer: "能言善道的" });
             // 辨
-            q.push({ id: id++, category: "形音義與辨析", question: "「辨」字(ㄅㄧㄢˋ)的意思是？", options: ["爭論", "分別、判別", "處理", "創設"], answer: "分別、判別", explanation: "「辨」中間為「刀」，有分開、判別之意，如「明辨是非」、「辨識」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辨」字(ㄅㄧㄢˋ)的意思是？", options: ["爭論", "分別、判別", "處理", "創設"], answer: "分別、判別" });
             // 辮
-            q.push({ id: id++, category: "形音義與辨析", question: "「辮」字(ㄅㄧㄢˋ)的意思是？", options: ["花片", "條狀物", "爭論", "能言善道"], answer: "分股編成的條狀物", explanation: "「辮」中間為「糸」，指分股編成的條狀物，如「髮辮」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辮」字(ㄅㄧㄢˋ)的意思是？", options: ["花片", "條狀物", "爭論", "能言善道"], answer: "分股編成的條狀物" });
             // 辦
-            q.push({ id: id++, category: "形音義與辨析", question: "「辦」字(ㄅㄢˋ)不包含以下哪個意思？", options: ["處理", "創設", "懲罰", "判別"], answer: "判別", explanation: "「辦」中間為「力」，指致力於處理事情。意思包含處理（公事公辦）、創設（創辦）、懲罰（查辦）。「判別」是「辨」的意思。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「辦」字(ㄅㄢˋ)不包含以下哪個意思？", options: ["處理", "創設", "懲罰", "判別"], answer: "判別" });
             // 瓣
-            q.push({ id: id++, category: "形音義與辨析", question: "「瓣」字(ㄅㄢˋ)的意思是？", options: ["花片", "條狀物", "處理", "爭論"], answer: "花片", explanation: "「瓣」中間為「瓜」，指花片或瓜果的瓤塊，如「花瓣」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「瓣」字(ㄅㄢˋ)的意思是？", options: ["花片", "條狀物", "處理", "爭論"], answer: "花片" });
             // 輿
-            q.push({ id: id++, category: "形音義與辨析", question: "「輿」字除了「車子」外，還有什麼意思？", options: ["轎子", "房子", "衣服", "食物"], answer: "轎子", explanation: "「輿」可指車箱、車子，也可指轎子（如「肩輿」）。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「輿論」中的「輿」字解釋為？", options: ["眾人的、公眾的", "車子", "轎子", "傳播"], answer: "眾人的、公眾的", explanation: "「輿」引申為「大眾的」，「輿論」即指公眾的言論。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「輿」字除了「車子」外，還有什麼意思？", options: ["轎子", "房子", "衣服", "食物"], answer: "轎子" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「輿論」中的「輿」字解釋為？", options: ["眾人的、公眾的", "車子", "轎子", "傳播"], answer: "眾人的、公眾的" });
             // 屬
-            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄓㄨˇ」時，意思通？", options: ["主", "矚", "囑", "煮"], answer: "囑", explanation: "「屬」通「囑」，意為叮嚀、託付，如文中的「屬之廷尉」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄕㄨˇ」時，意思不包含？", options: ["附著、歸於", "親眷", "部下", "注視"], answer: "注視", explanation: "「屬」讀ㄕㄨˇ時可指歸屬（附屬）、親屬、部屬。「注視」是「矚」（ㄓㄨˇ）的意思。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄓㄨˇ」時，意思通？", options: ["主", "矚", "囑", "煮"], answer: "囑" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「屬」讀作「ㄕㄨˇ」時，意思不包含？", options: ["附著、歸於", "親眷", "部下", "注視"], answer: "注視" });
             // 囑/矚
-            q.push({ id: id++, category: "形音義與辨析", question: "「囑」字的意思是？", options: ["注視", "叮嚀、託付", "附著", "爭論"], answer: "叮嚀、託付", explanation: "「囑」為口部，指用言語叮嚀、託付，如「囑咐」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「矚」字的意思是？", options: ["叮嚀", "注視", "託付", "歸於"], answer: "注視", explanation: "「矚」為目部，指眼睛注視，如「高瞻遠矚」、「眾所矚目」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「囑」字的意思是？", options: ["注視", "叮嚀、託付", "附著", "爭論"], answer: "叮嚀、託付" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「矚」字的意思是？", options: ["叮嚀", "注視", "託付", "歸於"], answer: "注視" });
             // 乃
-            q.push({ id: id++, category: "形音義與辨析", question: "「廷尉乃當之罰金」的「乃」字意思是？", options: ["是", "你", "竟、居然", "於是"], answer: "竟、居然", explanation: "此處「乃」表示出乎意料，翻譯為「竟然」、「居然」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「失敗乃成功之母」的「乃」字意思是？", options: ["是", "竟", "你", "才"], answer: "是", explanation: "此處「乃」作為繫詞，翻譯為「是」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「家祭無忘告乃翁」的「乃」字意思是？", options: ["竟", "是", "你、你的", "那"], answer: "你、你的", explanation: "此處「乃」為代詞，意指「你的」，「乃翁」即「你的父親」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「廷尉乃當之罰金」的「乃」字意思是？", options: ["是", "你", "竟、居然", "於是"], answer: "竟、居然" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「失敗乃成功之母」的「乃」字意思是？", options: ["是", "竟", "你", "才"], answer: "是" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「家祭無忘告乃翁」的「乃」字意思是？", options: ["竟", "是", "你、你的", "那"], answer: "你、你的" });
             // 走
-            q.push({ id: id++, category: "形音義與辨析", question: "「見乘輿車騎即走耳」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，快速"], answer: "動詞，奔跑", explanation: "古文中的「走」通常指「奔跑」。此句意為「看見皇帝車隊就跑開了」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「販夫走卒」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，離開"], answer: "形容詞，走動的", explanation: "此處「走」修飾「卒」，指替人跑腿差遣的（走動的）小差役。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「見乘輿車騎即走耳」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，快速"], answer: "動詞，奔跑" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「販夫走卒」的「走」字詞性與意思是？", options: ["動詞，奔跑", "形容詞，走動的", "名詞，僕人", "副詞，離開"], answer: "形容詞，走動的" });
             // 於
-            q.push({ id: id++, category: "形音義與辨析", question: "「是法不信於民也」的「於」表示什麼？", options: ["被動", "給", "從", "比"], answer: "被動", explanation: "此句為被動句，「不信於民」即「不被人民信任」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「己所不欲，勿施於人」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "給", explanation: "此處「於」表示對象，意為「給」或「對」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「千里之行，始於足下」的「於」意思是？", options: ["被", "給", "從、自", "比"], answer: "從、自", explanation: "此處「於」表示起點，意為「從」、「自」。" });
-            q.push({ id: id++, category: "形音義與辨析", question: "「蜀道難，難於上青天」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "比", explanation: "此處「於」表示比較，意為「比...還難」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「是法不信於民也」的「於」表示什麼？", options: ["被動", "給", "從", "比"], answer: "被動" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「己所不欲，勿施於人」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "給" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「千里之行，始於足下」的「於」意思是？", options: ["被", "給", "從、自", "比"], answer: "從、自" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「蜀道難，難於上青天」的「於」意思是？", options: ["被", "給", "從", "比"], answer: "比" });
             // 為
-            q.push({ id: id++, category: "形音義與辨析", question: "「二蟲盡為所吞」的「為」表示什麼？", options: ["被", "因為", "作為", "為了"], answer: "被", explanation: "「為...所...」是常見的被動句式，意為「被吞食」。" });
+            q.push({ id: id++, category: "形音義與辨析", question: "「二蟲盡為所吞」的「為」表示什麼？", options: ["被", "因為", "作為", "為了"], answer: "被" });
 
             // --- 2. 字義整理 ---
             // 為
-            q.push({ id: id++, category: "字義整理", question: "「釋之為廷尉」的「為」字解釋為？", options: ["因為", "被", "當、擔任", "為了"], answer: "當、擔任", explanation: "此處「為」指擔任職務，即「擔任廷尉」。" });
-            q.push({ id: id++, category: "字義整理", question: "「一傾而天下用法皆為輕重」的「為」字解釋為？", options: ["因為", "被", "當", "做"], answer: "因為", explanation: "此處「為」表示原因，意指「因為這樣而變得輕重不一」。" });
+            q.push({ id: id++, category: "字義整理", question: "「釋之為廷尉」的「為」字解釋為？", options: ["因為", "被", "當、擔任", "為了"], answer: "當、擔任" });
+            q.push({ id: id++, category: "字義整理", question: "「一傾而天下用法皆為輕重」的「為」字解釋為？", options: ["因為", "被", "當", "做"], answer: "因為" });
             // 行
-            q.push({ id: id++, category: "字義整理", question: "「上行，出中渭橋」的「行」字解釋為？", options: ["隊伍", "出巡", "走路", "行為"], answer: "出巡", explanation: "此處「行」指皇帝出外巡視。" });
-            q.push({ id: id++, category: "字義整理", question: "「以為行已過」的「行」字解釋為？", options: ["隊伍", "出巡", "離開", "走"], answer: "隊伍", explanation: "此處「行」指皇帝的車隊行列。" });
+            q.push({ id: id++, category: "字義整理", question: "「上行，出中渭橋」的「行」字解釋為？", options: ["隊伍", "出巡", "走路", "行為"], answer: "出巡" });
+            q.push({ id: id++, category: "字義整理", question: "「以為行已過」的「行」字解釋為？", options: ["隊伍", "出巡", "離開", "走"], answer: "隊伍" });
             // 下
-            q.push({ id: id++, category: "字義整理", question: "「匿橋下」的「下」字詞性是？", options: ["動詞", "名詞", "形容詞", "副詞"], answer: "名詞", explanation: "「橋下」的「下」表示方位，為名詞，指底部、低處。" });
-            q.push({ id: id++, category: "字義整理", question: "「今既下廷尉」的「下」字解釋為？", options: ["低處", "下去", "上位者交付任務給下位者", "降落"], answer: "上位者交付任務給下位者", explanation: "此處「下」作動詞用，特指上位者將人或事交付給下位者處理。" });
+            q.push({ id: id++, category: "字義整理", question: "「匿橋下」的「下」字詞性是？", options: ["動詞", "名詞", "形容詞", "副詞"], answer: "名詞" });
+            q.push({ id: id++, category: "字義整理", question: "「今既下廷尉」的「下」字解釋為？", options: ["低處", "下去", "上位者交付任務給下位者", "降落"], answer: "上位者交付任務給下位者" });
             // 使
-            q.push({ id: id++, category: "字義整理", question: "「於是使騎捕」的「使」字解釋為？", options: ["派遣", "假使", "使用", "命令"], answer: "派遣", explanation: "此處「使」為動詞，意為派遣、命令騎兵去追捕。" });
-            q.push({ id: id++, category: "字義整理", question: "「上使立誅之則已」的「使」字解釋為？", options: ["派遣", "假使", "使用", "讓"], answer: "假使", explanation: "此處「使」為連詞，表示假設語氣，意為「假使」、「如果」。" });
+            q.push({ id: id++, category: "字義整理", question: "「於是使騎捕」的「使」字解釋為？", options: ["派遣", "假使", "使用", "命令"], answer: "派遣" });
+            q.push({ id: id++, category: "字義整理", question: "「上使立誅之則已」的「使」字解釋為？", options: ["派遣", "假使", "使用", "讓"], answer: "假使" });
             // 之 (5 usages)
-            q.push({ id: id++, category: "字義整理", question: "「久之」的「之」字解釋為？", options: ["無義", "他", "的", "往"], answer: "無義", explanation: "此處「之」為助詞，無實義，用來調節音節，表示時間經過。" });
-            q.push({ id: id++, category: "字義整理", question: "「屬之廷尉」的「之」字指代什麼？", options: ["廷尉", "縣人/人犯", "皇帝", "馬"], answer: "縣人/人犯", explanation: "此處「之」為代詞，指前面提到的犯人（縣人）。" });
-            q.push({ id: id++, category: "字義整理", question: "「今法如此而更重之」的「之」字指代什麼？", options: ["人犯", "指罪", "廷尉", "法律"], answer: "指罪", explanation: "此處「之」為代詞，代指「這個罪」或「刑罰」。" });
-            q.push({ id: id++, category: "字義整理", question: "「廷尉，天下之平也」的「之」字解釋為？", options: ["無義", "的", "指天下", "往"], answer: "的", explanation: "此處「之」為結構助詞，相當於白話文的「的」。" });
-            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「之」字指代什麼？", options: ["指犯罪的事", "人犯", "廷尉", "無義"], answer: "指犯罪的事", explanation: "此處「之」為代詞，代指整件事理或判決的情況。" });
+            q.push({ id: id++, category: "字義整理", question: "「久之」的「之」字解釋為？", options: ["無義", "他", "的", "往"], answer: "無義" });
+            q.push({ id: id++, category: "字義整理", question: "「屬之廷尉」的「之」字指代什麼？", options: ["廷尉", "縣人/人犯", "皇帝", "馬"], answer: "縣人/人犯" });
+            q.push({ id: id++, category: "字義整理", question: "「今法如此而更重之」的「之」字指代什麼？", options: ["人犯", "指罪", "廷尉", "法律"], answer: "指罪" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉，天下之平也」的「之」字解釋為？", options: ["無義", "的", "指天下", "往"], answer: "的" });
+            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「之」字指代什麼？", options: ["指犯罪的事", "人犯", "廷尉", "無義"], answer: "指犯罪的事" });
             // 當 (5 meanings)
-            q.push({ id: id++, category: "字義整理", question: "「人犯蹕，當罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "抵擋"], answer: "判處", explanation: "此處「當」為動詞，意為判決、判處。" });
-            q.push({ id: id++, category: "字義整理", question: "「廷尉乃當之罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "正確"], answer: "判處", explanation: "同「當罰金」，此處亦作動詞，意為判決。" });
-            q.push({ id: id++, category: "字義整理", question: "「奏當」的「當」字解釋為？", options: ["判處", "判決/判決結果", "應當", "對"], answer: "判決/判決結果", explanation: "「奏當」指向上報告判決結果，故此處「當」為名詞。" });
-            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「當」字，在「廷尉當是也」這個語境中解釋為？", options: ["判處", "判決/判決結果", "應該、應當", "正確"], answer: "判決/判決結果", explanation: "此處指廷尉的「判決」是正確的，故作名詞用。" });
-            q.push({ id: id++, category: "字義整理", question: "「當省則省」的「當」字解釋為？", options: ["判處", "判決", "應該、應當", "正確"], answer: "應該、應當", explanation: "此處「當」為副詞，意為「應當」、「應該」。" });
+            q.push({ id: id++, category: "字義整理", question: "「人犯蹕，當罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "抵擋"], answer: "判處" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉乃當之罰金」的「當」字解釋為？", options: ["判處", "判決結果", "應當", "正確"], answer: "判處" });
+            q.push({ id: id++, category: "字義整理", question: "「奏當」的「當」字解釋為？", options: ["判處", "判決/判決結果", "應當", "對"], answer: "判決/判決結果" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「當」字，在「廷尉當是也」這個語境中解釋為？", options: ["判處", "判決/判決結果", "應該、應當", "正確"], answer: "判決/判決結果" });
+            q.push({ id: id++, category: "字義整理", question: "「當省則省」的「當」字解釋為？", options: ["判處", "判決", "應該、應當", "正確"], answer: "應該、應當" });
             // 是 (3 meanings)
-            q.push({ id: id++, category: "字義整理", question: "「是法不信於民也」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這", explanation: "此處「是」為指示代詞（或指示形容詞），意為「這」，指「這種作法」。" });
-            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「是」字解釋為？", options: ["正確的", "此、這", "是", "凡是"], answer: "正確的", explanation: "此處「是」為形容詞，意為「正確的」、「對的」。" });
-            q.push({ id: id++, category: "字義整理", question: "「是可忍，孰不可忍」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這", explanation: "此處「是」為代詞，指「這件事」。意為：如果這件事都能容忍，還有什麼不能容忍？" });
+            q.push({ id: id++, category: "字義整理", question: "「是法不信於民也」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這" });
+            q.push({ id: id++, category: "字義整理", question: "「廷尉當是也」的「是」字解釋為？", options: ["正確的", "此、這", "是", "凡是"], answer: "正確的" });
+            q.push({ id: id++, category: "字義整理", question: "「是可忍，孰不可忍」的「是」字解釋為？", options: ["正確", "此、這", "是", "凡是"], answer: "此、這" });
             // 唯 (2 meanings)
-            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「唯」字解釋為？", options: ["只有", "希望", "獨", "被"], answer: "希望", explanation: "此處「唯」表示希望、請求的語氣，相當於「希望」。" });
-            q.push({ id: id++, category: "字義整理", question: "「唯利是圖」的「唯」字解釋為？", options: ["希望", "獨、只有", "因為", "被"], answer: "獨、只有", explanation: "此處「唯」意為「只有」、「只要」。" });
+            q.push({ id: id++, category: "字義整理", question: "「唯陛下察之」的「唯」字解釋為？", options: ["只有", "希望", "獨", "被"], answer: "希望" });
+            q.push({ id: id++, category: "字義整理", question: "「唯利是圖」的「唯」字解釋為？", options: ["希望", "獨、只有", "因為", "被"], answer: "獨、只有" });
             // 親 (2 meanings)
-            q.push({ id: id++, category: "字義整理", question: "「此人親驚吾馬」的「親」字解釋為？", options: ["親自", "親愛", "親戚", "親近"], answer: "親自", explanation: "此處「親」為副詞，意為「親自」、「當場」。" });
-            q.push({ id: id++, category: "字義整理", question: "「人人親其親」的「親」字解釋為？", options: ["親自", "親愛", "親近", "親戚"], answer: "親愛", explanation: "此句第一個「親」為動詞，意為「親愛」、「孝敬」。第二個「親」則是名詞（親人）。" });
+            q.push({ id: id++, category: "字義整理", question: "「此人親驚吾馬」的「親」字解釋為？", options: ["親自", "親愛", "親戚", "親近"], answer: "親自" });
+            q.push({ id: id++, category: "字義整理", question: "「人人親其親」的「親」字解釋為？", options: ["親自", "親愛", "親近", "親戚"], answer: "親愛" });
 
             // --- 3. 課文結構 ---
-            q.push({ id: id++, category: "課文結構", question: "張釋之執法一案中，犯人犯了什麼罪？", options: ["死刑", "犯蹕", "偷竊", "謀反"], answer: "犯蹕", explanation: "犯人誤闖皇帝車隊的管制行列，此罪名為「犯蹕」。" });
-            q.push({ id: id++, category: "課文結構", question: "皇帝對張釋之初次判決的反應是？", options: ["欣然接受", "不滿發怒", "無動於衷", "大加讚賞"], answer: "不滿發怒", explanation: "皇帝認為有人驚嚇到他的馬，只判罰金太輕，因此「怒」。" });
-            q.push({ id: id++, category: "課文結構", question: "張釋之據理力爭，強調法律執行的什麼原則？", options: ["嚴刑峻法", "皇權至上", "法律之前人人平等", "以德服人"], answer: "法律之前人人平等", explanation: "張釋之強調「法者，天子所與天下公共也」，即法律是天子與人民共同遵守的，體現法律之前人人平等的精神。" });
-            q.push({ id: id++, category: "課文結構", question: "最終漢文帝對判決的態度是？", options: ["堅持加重刑罰", "撤換廷尉", "從善如流，認同判決", "大赦天下"], answer: "從善如流，認同判決", explanation: "漢文帝思考許久（良久）後，說「廷尉當是也」，表示他接受了張釋之的觀點，展現從善如流的胸襟。" });
-            q.push({ id: id++, category: "課文結構", question: "關於史記的會考題：作者認為史記書寫了什麼？", options: ["呈現市井小民在歷史上的意義", "描寫史事詳盡", "透過平凡人物襯托主角", "顛覆大智若愚的價值"], answer: "呈現市井小民在歷史上的意義", explanation: "文中提到「漂母」、「漁父」等小人物對歷史的影響，並說「史記書寫了主流價值之外的另一種信仰」，故選(A)。" });
+            q.push({ id: id++, category: "課文結構", question: "張釋之執法一案中，犯人犯了什麼罪？", options: ["死刑", "犯蹕", "偷竊", "謀反"], answer: "犯蹕" });
+            q.push({ id: id++, category: "課文結構", question: "皇帝對張釋之初次判決的反應是？", options: ["欣然接受", "不滿發怒", "無動於衷", "大加讚賞"], answer: "不滿發怒" });
+            q.push({ id: id++, category: "課文結構", question: "張釋之據理力爭，強調法律執行的什麼原則？", options: ["嚴刑峻法", "皇權至上", "法律之前人人平等", "以德服人"], answer: "法律之前人人平等" });
+            q.push({ id: id++, category: "課文結構", question: "最終漢文帝對判決的態度是？", options: ["堅持加重刑罰", "撤換廷尉", "從善如流，認同判決", "大赦天下"], answer: "從善如流，認同判決" });
+            q.push({ id: id++, category: "課文結構", question: "關於史記的會考題：作者認為史記書寫了什麼？", options: ["呈現市井小民在歷史上的意義", "描寫史事詳盡", "透過平凡人物襯托主角", "顛覆大智若愚的價值"], answer: "呈現市井小民在歷史上的意義" });
 
             // --- 4. 史記成語 (15 則) ---
-            q.push({ id: id++, category: "史記成語", question: "「吐哺握髮」的意思是？", options: ["形容求賢若渴", "生活忙碌", "飲食不佳", "頭髮散亂"], answer: "形容求賢若渴", explanation: "周公為了接待賢才，吃飯時吐出食物、洗頭時握著頭髮立刻出來，形容求賢若渴。" });
-            q.push({ id: id++, category: "史記成語", question: "「利令智昏」的意思是？", options: ["因貪利而失去理智", "聰明反被聰明誤", "利益使人變聰明", "昏倒了"], answer: "因貪利而失去理智", explanation: "「令」是使，「昏」是昏亂。意指貪圖利益使得理智昏亂，看不清是非。" });
-            q.push({ id: id++, category: "史記成語", question: "「助紂為虐」的意思是？", options: ["幫助壞人做壞事", "幫助好人", "虐待他人", "被虐待"], answer: "幫助壞人做壞事", explanation: "紂是暴君，幫助紂王施行暴政，比喻協助壞人做壞事。" });
-            q.push({ id: id++, category: "史記成語", question: "「肝腦塗地」的意思是？", options: ["死得很慘或甘願犧牲", "生病了", "跌倒了", "塗抹牆壁"], answer: "死得很慘或甘願犧牲", explanation: "形容死狀淒慘，戰場上肝腦塗抹於地。後引申為竭盡忠誠，甘願犧牲一切。" });
-            q.push({ id: id++, category: "史記成語", question: "「奇貨可居」的主角是誰？", options: ["呂不韋", "秦始皇", "韓信", "張良"], answer: "呂不韋", explanation: "呂不韋認為秦國質子異人（子楚）像稀有的貨物一樣可以囤積，日後可謀取暴利。比喻仗持某種專長或東西作為資本以謀利。" });
-            q.push({ id: id++, category: "史記成語", question: "「背水一戰」的意思是？", options: ["比喻決一死戰", "背著水打仗", "在水邊玩", "逃跑"], answer: "比喻決一死戰", explanation: "韓信背靠河水佈陣，讓士兵無路可退，只能拚死作戰。比喻抱著必死的決心一戰。" });
-            q.push({ id: id++, category: "史記成語", question: "「韋編三絕」形容什麼？", options: ["勤奮讀書", "書本破爛", "繩子斷了", "不想讀書"], answer: "勤奮讀書", explanation: "孔子讀《易經》，綁竹簡的皮繩斷了好幾次。形容讀書勤奮。" });
-            q.push({ id: id++, category: "史記成語", question: "「人為刀俎，我為魚肉」比喻什麼？", options: ["受制於人", "做菜", "殺魚", "吃飯"], answer: "受制於人", explanation: "別人是刀和砧板，我是魚和肉。比喻情勢危急，處於任人宰割的地位。" });
-            q.push({ id: id++, category: "史記成語", question: "「破釜沉舟」形容什麼精神？", options: ["視死如歸、義無反顧", "破壞公物", "坐船遊玩", "放棄希望"], answer: "視死如歸、義無反顧", explanation: "項羽渡河後，鑿沉船隻、打破鍋具，表示不勝利就不活著回來。形容做事果決，義無反顧。" });
-            q.push({ id: id++, category: "史記成語", question: "「三令五申」的意思是？", options: ["再三叮嚀告誡", "三個命令五個申請", "軍隊編制", "很多法令"], answer: "再三叮嚀告誡", explanation: "孫武訓練宮女時，多次下達命令與說明。形容再三叮嚀告誡。" });
-            q.push({ id: id++, category: "史記成語", question: "「約法三章」泛指什麼？", options: ["事先約好或規定的事", "三章法律", "寫文章", "法律很嚴格"], answer: "事先約好或規定的事", explanation: "劉邦入關中，與百姓約定只保留三條法律。後泛指事先約好的規定。" });
-            q.push({ id: id++, category: "史記成語", question: "「一諾千金」形容什麼？", options: ["承諾信用高", "很有錢", "黃金很重", "賄賂"], answer: "承諾信用高", explanation: "季布極守信用，楚人說得季布一句承諾，勝過得到百斤黃金。形容信用極高。" });
-            q.push({ id: id++, category: "史記成語", question: "「一決雌雄」的意思是？", options: ["比喻互相較量以決定勝敗", "分辨公母", "決定性別", "動物打架"], answer: "比喻互相較量以決定勝敗", explanation: "指雙方互相較量，以決定高下、勝負。" });
-            q.push({ id: id++, category: "史記成語", question: "「雞鳴狗盜」比喻什麼？", options: ["有卑下技能的人", "養雞養狗", "偷雞摸狗", "熱鬧的景象"], answer: "有卑下技能的人", explanation: "孟嘗君的食客裝狗偷裘、學雞叫騙開城門，助其脫困。比喻有某種卑下技能的人，或指卑微的技能。" });
-            q.push({ id: id++, category: "史記成語", question: "「毛遂自荐」的意思是？", options: ["自告奮勇", "推薦毛筆", "自我反省", "放棄機會"], answer: "自告奮勇", explanation: "毛遂自我推薦隨平原君出使楚國。比喻自告奮勇，自我推薦。" });
+            q.push({ id: id++, category: "史記成語", question: "「吐哺握髮」的意思是？", options: ["形容求賢若渴", "生活忙碌", "飲食不佳", "頭髮散亂"], answer: "形容求賢若渴" });
+            q.push({ id: id++, category: "史記成語", question: "「利令智昏」的意思是？", options: ["因貪利而失去理智", "聰明反被聰明誤", "利益使人變聰明", "昏倒了"], answer: "因貪利而失去理智" });
+            q.push({ id: id++, category: "史記成語", question: "「助紂為虐」的意思是？", options: ["幫助壞人做壞事", "幫助好人", "虐待他人", "被虐待"], answer: "幫助壞人做壞事" });
+            q.push({ id: id++, category: "史記成語", question: "「肝腦塗地」的意思是？", options: ["死得很慘或甘願犧牲", "生病了", "跌倒了", "塗抹牆壁"], answer: "死得很慘或甘願犧牲" });
+            q.push({ id: id++, category: "史記成語", question: "「奇貨可居」的主角是誰？", options: ["呂不韋", "秦始皇", "韓信", "張良"], answer: "呂不韋" });
+            q.push({ id: id++, category: "史記成語", question: "「背水一戰」的意思是？", options: ["比喻決一死戰", "背著水打仗", "在水邊玩", "逃跑"], answer: "比喻決一死戰" });
+            q.push({ id: id++, category: "史記成語", question: "「韋編三絕」形容什麼？", options: ["勤奮讀書", "書本破爛", "繩子斷了", "不想讀書"], answer: "勤奮讀書" });
+            q.push({ id: id++, category: "史記成語", question: "「人為刀俎，我為魚肉」比喻什麼？", options: ["受制於人", "做菜", "殺魚", "吃飯"], answer: "受制於人" });
+            q.push({ id: id++, category: "史記成語", question: "「破釜沉舟」形容什麼精神？", options: ["視死如歸、義無反顧", "破壞公物", "坐船遊玩", "放棄希望"], answer: "視死如歸、義無反顧" });
+            q.push({ id: id++, category: "史記成語", question: "「三令五申」的意思是？", options: ["再三叮嚀告誡", "三個命令五個申請", "軍隊編制", "很多法令"], answer: "再三叮嚀告誡" });
+            q.push({ id: id++, category: "史記成語", question: "「約法三章」泛指什麼？", options: ["事先約好或規定的事", "三章法律", "寫文章", "法律很嚴格"], answer: "事先約好或規定的事" });
+            q.push({ id: id++, category: "史記成語", question: "「一諾千金」形容什麼？", options: ["承諾信用高", "很有錢", "黃金很重", "賄賂"], answer: "承諾信用高" });
+            q.push({ id: id++, category: "史記成語", question: "「一決雌雄」的意思是？", options: ["比喻互相較量以決定勝敗", "分辨公母", "決定性別", "動物打架"], answer: "比喻互相較量以決定勝敗" });
+            q.push({ id: id++, category: "史記成語", question: "「雞鳴狗盜」比喻什麼？", options: ["有卑下技能的人", "養雞養狗", "偷雞摸狗", "熱鬧的景象"], answer: "有卑下技能的人" });
+            q.push({ id: id++, category: "史記成語", question: "「毛遂自荐」的意思是？", options: ["自告奮勇", "推薦毛筆", "自我反省", "放棄機會"], answer: "自告奮勇" });
 
             // --- 5. 法律成語與名言 ---
             // 成語 (10 則)
-            q.push({ id: id++, category: "法律成語與名言", question: "「嚴刑峻法」的意思是？", options: ["嚴厲的刑法", "寬鬆的法律", "很多法律", "修改法律"], answer: "嚴厲的刑法", explanation: "「峻」意為高、陡峭，引申為嚴厲。指嚴厲的刑罰和法律。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「繩之以法」的意思是？", options: ["以法律制裁罪犯", "用繩子綁", "編織法律", "法律如繩"], answer: "以法律制裁罪犯", explanation: "「繩」作為動詞，指制裁、約束。意指用法律來制裁罪犯。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「貪贓枉法」的意思是？", options: ["貪汙受賄，破壞法紀", "貪吃", "法律很髒", "冤枉好人"], answer: "貪汙受賄，破壞法紀", explanation: "貪圖贓款，違背法律。指官員貪污受賄，破壞法紀。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「就地正法」的意思是？", options: ["在犯罪所在地執行死刑", "原地不動", "改正法律", "正確的法律"], answer: "在犯罪所在地執行死刑", explanation: "在犯罪現場或當地立即執行死刑。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「目無法紀」的意思是？", options: ["膽大妄為，無視法律", "眼睛看不見", "法律很亂", "沒有法律"], answer: "膽大妄為，無視法律", explanation: "眼中沒有法律和紀律。形容人膽大妄為，胡作非為。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「奉公守法」的意思是？", options: ["謹守法紀，不徇私舞弊", "侍奉公公", "守住門口", "公佈法律"], answer: "謹守法紀，不徇私舞弊", explanation: "奉行公事，遵守法令。形容人處事公正，遵守法紀。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「作法自斃」比喻什麼？", options: ["自作自受", "自己做法事", "自殺", "法律無效"], answer: "自作自受", explanation: "商鞅制定嚴苛法律，最後自己卻死在這些法律下。比喻自己訂立的法規，反而使自己受害，或自作自受。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「以身試法」的意思是？", options: ["無視法律制裁而故意犯法", "用身體測試", "嘗試法律", "鍛鍊身體"], answer: "無視法律制裁而故意犯法", explanation: "拿自己的身體去嘗試法律。指明知故犯，不顧法律制裁。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「對簿公堂」的意思是？", options: ["在法庭上公開審問、爭訟", "寫作業", "堂上讀書", "私下和解"], answer: "在法庭上公開審問、爭訟", explanation: "簿：文狀、起訴書。指在公堂上受審或爭訟。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「毋枉毋縱」的意思是？", options: ["不冤枉好人，不縱容壞人", "不要歪斜", "縱容壞人", "冤枉好人"], answer: "不冤枉好人，不縱容壞人", explanation: "不冤枉無辜的人，也不放過有罪的人。形容審判公正嚴明。" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「嚴刑峻法」的意思是？", options: ["嚴厲的刑法", "寬鬆的法律", "很多法律", "修改法律"], answer: "嚴厲的刑法" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「繩之以法」的意思是？", options: ["以法律制裁罪犯", "用繩子綁", "編織法律", "法律如繩"], answer: "以法律制裁罪犯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「貪贓枉法」的意思是？", options: ["貪汙受賄，破壞法紀", "貪吃", "法律很髒", "冤枉好人"], answer: "貪汙受賄，破壞法紀" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「就地正法」的意思是？", options: ["在犯罪所在地執行死刑", "原地不動", "改正法律", "正確的法律"], answer: "在犯罪所在地執行死刑" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「目無法紀」的意思是？", options: ["膽大妄為，無視法律", "眼睛看不見", "法律很亂", "沒有法律"], answer: "膽大妄為，無視法律" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「奉公守法」的意思是？", options: ["謹守法紀，不徇私舞弊", "侍奉公公", "守住門口", "公佈法律"], answer: "謹守法紀，不徇私舞弊" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「作法自斃」比喻什麼？", options: ["自作自受", "自己做法事", "自殺", "法律無效"], answer: "自作自受" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「以身試法」的意思是？", options: ["無視法律制裁而故意犯法", "用身體測試", "嘗試法律", "鍛鍊身體"], answer: "無視法律制裁而故意犯法" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「對簿公堂」的意思是？", options: ["在法庭上公開審問、爭訟", "寫作業", "堂上讀書", "私下和解"], answer: "在法庭上公開審問、爭訟" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「毋枉毋縱」的意思是？", options: ["不冤枉好人，不縱容壞人", "不要歪斜", "縱容壞人", "冤枉好人"], answer: "不冤枉好人，不縱容壞人" });
             // 名言 (12 則)
-            q.push({ id: id++, category: "法律成語與名言", question: "「立法明分，而不以私害法，則治。」是誰的名言？", options: ["商鞅", "韓非子", "孔子", "孟子"], answer: "商鞅", explanation: "商鞅強調立法要分寸分明，不能因私情損害法律，國家才能大治。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「刑過不避大臣，賞善不遺匹夫。」是誰的名言？", options: ["韓非子", "商鞅", "荀子", "老子"], answer: "韓非子", explanation: "韓非子主張法治，認為處罰罪過不避開權貴大臣，獎賞善行不遺漏平民百姓。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「法者，輔治之具，當以教化為先。」是誰的名言？", options: ["薛瑄", "曾國藩", "王陽明", "朱熹"], answer: "薛瑄", explanation: "明代薛瑄認為法律是輔助治理的工具，應當以道德教化為優先。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「治將亂之國，當用重典；治久亂之國，宜予生路。」是誰的名言？", options: ["曾國藩", "李鴻章", "康有為", "梁啟超"], answer: "曾國藩", explanation: "曾國藩提出治理亂世的策略，剛開始亂要用重刑震懾，亂久了則要給人民生路。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「國家愈腐化，法律愈多。」是誰的名言？", options: ["泰西塔斯", "凱撒", "西塞羅", "柏拉圖"], answer: "泰西塔斯", explanation: "古羅馬歷史學家泰西塔斯諷刺國家越腐敗，就需要越多繁瑣的法律來補救或牟利。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「莫聽片面之詞而判決。」是哪裡的諺語？", options: ["日本", "中國", "韓國", "美國"], answer: "日本", explanation: "日本諺語，強調司法審判要聽取雙方說法，不能只聽一面之詞。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「法律少而受到嚴格遵守的國家，才能治理得更好。」是誰的名言？", options: ["笛卡兒", "伏爾泰", "盧梭", "孟德斯鳩"], answer: "笛卡兒", explanation: "笛卡兒認為法律貴在執行與遵守，而不在多。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。」是誰的名言？", options: ["雨果", "巴爾扎克", "大仲馬", "莫泊桑"], answer: "雨果", explanation: "雨果強調個人的道德自律（良心）與社會的集體規範（法律）之重要性。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「人民的安全是最高的法律。」是誰的名言？", options: ["培根", "洛克", "霍布斯", "休謨"], answer: "培根", explanation: "培根認為法律的最終目的是保障人民的安全。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「執法重於立法。」是誰的名言？", options: ["傑佛遜", "華盛頓", "羅斯福", "甘迺迪"], answer: "傑佛遜", explanation: "傑佛遜強調法律制定得再好，若執行不力也是枉然，故執法更為重要。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「法律是顯露的道德，道德是隱藏的法律。」是誰的名言？", options: ["林肯", "馬克吐溫", "海明威", "愛默生"], answer: "林肯", explanation: "林肯闡述法律與道德的一體兩面，法律是道德的具體化規範。" });
-            q.push({ id: id++, category: "法律成語與名言", question: "「太寬容的法律無人遵守，太嚴格的法律難以厲行。」是誰的名言？", options: ["富蘭克林", "愛迪生", "福特", "比爾蓋茲"], answer: "富蘭克林", explanation: "富蘭克林認為法律需寬嚴適中，才能有效執行與遵守。" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「立法明分，而不以私害法，則治。」是誰的名言？", options: ["商鞅", "韓非子", "孔子", "孟子"], answer: "商鞅" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「刑過不避大臣，賞善不遺匹夫。」是誰的名言？", options: ["韓非子", "商鞅", "荀子", "老子"], answer: "韓非子" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法者，輔治之具，當以教化為先。」是誰的名言？", options: ["薛瑄", "曾國藩", "王陽明", "朱熹"], answer: "薛瑄" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「治將亂之國，當用重典；治久亂之國，宜予生路。」是誰的名言？", options: ["曾國藩", "李鴻章", "康有為", "梁啟超"], answer: "曾國藩" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「國家愈腐化，法律愈多。」是誰的名言？", options: ["泰西塔斯", "凱撒", "西塞羅", "柏拉圖"], answer: "泰西塔斯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「莫聽片面之詞而判決。」是哪裡的諺語？", options: ["日本", "中國", "韓國", "美國"], answer: "日本" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法律少而受到嚴格遵守的國家，才能治理得更好。」是誰的名言？", options: ["笛卡兒", "伏爾泰", "盧梭", "孟德斯鳩"], answer: "笛卡兒" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「對個人來說，唯一的權力是良心；對人民來說，唯一的權力是法律。」是誰的名言？", options: ["雨果", "巴爾扎克", "大仲馬", "莫泊桑"], answer: "雨果" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「人民的安全是最高的法律。」是誰的名言？", options: ["培根", "洛克", "霍布斯", "休謨"], answer: "培根" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「執法重於立法。」是誰的名言？", options: ["傑佛遜", "華盛頓", "羅斯福", "甘迺迪"], answer: "傑佛遜" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「法律是顯露的道德，道德是隱藏的法律。」是誰的名言？", options: ["林肯", "馬克吐溫", "海明威", "愛默生"], answer: "林肯" });
+            q.push({ id: id++, category: "法律成語與名言", question: "「太寬容的法律無人遵守，太嚴格的法律難以厲行。」是誰的名言？", options: ["富蘭克林", "愛迪生", "福特", "比爾蓋茲"], answer: "富蘭克林" });
 
             return q;
         };
@@ -683,7 +683,7 @@
                                     <h2 className="text-xl font-bold text-stone-800">快速測驗</h2>
                                     <span className="bg-purple-100 text-purple-600 text-xs font-bold px-2 py-1 rounded border border-purple-200">New</span>
                                 </div>
-                                <p className="text-stone-500 pl-16">列表式刷題模式，作答後立即顯示詳解，並自動記錄錯題。</p>
+                                <p className="text-stone-500 pl-16">列表式刷題模式，作答後立即顯示對錯，並自動記錄錯題。</p>
                             </button>
                         </div>
                     </div>
@@ -703,14 +703,13 @@
             );
         };
 
-        // --- Quick Quiz Module (Updated) ---
+        // --- Quick Quiz Module (New!) ---
         const QuickQuizModule = ({ onBack }) => {
             const [selectedCategory, setSelectedCategory] = useState(null);
             const [questions, setQuestions] = useState([]);
             const [answers, setAnswers] = useState({}); // Stores answer status: 'correct' or 'incorrect'
             const [favorites, setFavorites] = useState(new Set());
             const [score, setScore] = useState(0);
-            const [showSummary, setShowSummary] = useState(false);
 
             // Load favorites on mount
             useEffect(() => {
@@ -733,7 +732,7 @@
                 }
             }, []);
 
-            // Auto Save & Completion Check
+            // Auto Save
             useEffect(() => {
                 if (selectedCategory && questions.length > 0) {
                     LocalDB.saveQuickQuizProgress({
@@ -742,11 +741,6 @@
                         answers: answers,
                         score: score
                     });
-
-                    // Check if all questions are answered
-                    if (Object.keys(answers).length === questions.length && questions.length > 0) {
-                        setShowSummary(true);
-                    }
                 }
             }, [answers, score, questions, selectedCategory]);
 
@@ -834,87 +828,27 @@
 
             // Quiz List Screen
             const answeredCount = Object.keys(answers).length;
-            const progressPercent = (answeredCount / questions.length) * 100;
-
-            // Summary Modal
-            const SummaryModal = () => {
-                if (!showSummary) return null;
-                const wrongCount = questions.length - score;
-                const accuracy = Math.round((score / questions.length) * 100);
-
-                return (
-                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in backdrop-blur-sm">
-                        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full relative overflow-hidden text-center">
-                            <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
-                            <Award className="w-16 h-16 text-yellow-500 mx-auto mb-4 drop-shadow-lg" />
-                            <h2 className="text-2xl font-bold text-stone-800 mb-2">恭喜完成刷題！</h2>
-                            <p className="text-stone-500 mb-6">以下是您的練習成果</p>
-                            
-                            <div className="grid grid-cols-2 gap-4 mb-6">
-                                <div className="bg-green-50 p-4 rounded-xl">
-                                    <div className="text-3xl font-bold text-green-600">{score}</div>
-                                    <div className="text-xs text-green-800 font-bold uppercase">答對</div>
-                                </div>
-                                <div className="bg-red-50 p-4 rounded-xl">
-                                    <div className="text-3xl font-bold text-red-600">{wrongCount}</div>
-                                    <div className="text-xs text-red-800 font-bold uppercase">答錯</div>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-stone-50 p-4 rounded-xl mb-8 flex justify-between items-center">
-                                <span className="text-stone-600 font-medium">總題數</span>
-                                <span className="text-stone-800 font-bold">{questions.length}</span>
-                            </div>
-                            <div className="bg-purple-50 p-4 rounded-xl mb-8 flex justify-between items-center border border-purple-100">
-                                <span className="text-purple-700 font-bold">正確率</span>
-                                <span className="text-2xl font-black text-purple-600">{accuracy}%</span>
-                            </div>
-
-                            <div className="flex gap-3">
-                                <button onClick={() => { LocalDB.clearQuickQuizProgress(); onBack(); }} className="flex-1 py-3 bg-stone-200 text-stone-700 rounded-xl font-bold hover:bg-stone-300 transition">
-                                    離開
-                                </button>
-                                <button onClick={() => setShowSummary(false)} className="flex-1 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-200">
-                                    檢視題目
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
             
             return (
-                <div className="h-full flex flex-col bg-stone-50 relative">
-                    <SummaryModal />
-
-                    {/* Header with Progress Bar */}
-                    <div className="bg-white/90 backdrop-blur-sm shadow-md sticky top-0 z-20 border-b border-purple-100">
-                        {/* Progress Bar */}
-                        <div className="w-full bg-stone-200 h-1.5">
-                            <div 
-                                className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1.5 transition-all duration-500 ease-out" 
-                                style={{ width: `${progressPercent}%` }}
-                            ></div>
+                <div className="h-full flex flex-col bg-stone-50">
+                    {/* Header with Score */}
+                    <div className="bg-white/90 backdrop-blur-sm shadow-md px-4 py-3 flex items-center justify-between sticky top-0 z-20 border-b border-purple-100">
+                        <div className="flex items-center">
+                            <button onClick={onBack} className="flex items-center text-stone-500 hover:text-purple-600 mr-4 px-2 py-1 rounded-full hover:bg-purple-50 transition">
+                                <ArrowLeft className="w-4 h-4 mr-1" /> <span className="text-sm font-medium">結束</span>
+                            </button>
+                            <span className="text-stone-600 font-bold hidden md:inline">{selectedCategory === 'all' ? '全範圍綜合' : selectedCategory}</span>
                         </div>
-
-                        <div className="px-4 py-3 flex items-center justify-between">
-                            <div className="flex items-center">
-                                <button onClick={onBack} className="flex items-center text-stone-500 hover:text-purple-600 mr-4 px-2 py-1 rounded-full hover:bg-purple-50 transition">
-                                    <ArrowLeft className="w-4 h-4 mr-1" /> <span className="text-sm font-medium">結束</span>
-                                </button>
-                                <span className="text-stone-600 font-bold hidden md:inline">{selectedCategory === 'all' ? '全範圍綜合' : selectedCategory}</span>
+                        
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center bg-purple-50 px-4 py-1.5 rounded-full border border-purple-200 shadow-sm">
+                                <Trophy className="w-4 h-4 text-purple-600 mr-2" />
+                                <span className="font-bold text-purple-700 text-lg">{score}</span>
+                                <span className="mx-1 text-purple-300">/</span>
+                                <span className="text-sm text-purple-500">答對</span>
                             </div>
-                            
-                            <div className="flex items-center space-x-4">
-                                <div className="flex items-center bg-purple-50 px-4 py-1.5 rounded-full border border-purple-200 shadow-sm">
-                                    <Trophy className="w-4 h-4 text-purple-600 mr-2" />
-                                    <span className="font-bold text-purple-700 text-lg">{score}</span>
-                                    <span className="mx-1 text-purple-300">/</span>
-                                    <span className="text-sm text-purple-500">答對</span>
-                                </div>
-                                <div className="text-xs text-stone-400 font-mono">
-                                    進度: {answeredCount} / {questions.length}
-                                </div>
+                            <div className="text-xs text-stone-400 font-mono">
+                                進度: {answeredCount} / {questions.length}
                             </div>
                         </div>
                     </div>
@@ -943,17 +877,15 @@
                                             
                                             <h3 className="text-lg font-bold text-stone-800 mb-6 leading-relaxed">{q.question}</h3>
                                             
-                                            {/* Changed Options to Vertical List (flex-col) */}
-                                            <div className="flex flex-col gap-3">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 {q.options.map((opt, i) => {
-                                                    let btnClass = "p-4 rounded-lg border text-left text-base font-medium transition-all relative ";
+                                                    let btnClass = "p-3 rounded-lg border text-left text-sm font-medium transition-all relative ";
                                                     
                                                     if (isAnswered) {
                                                         if (opt === q.answer) {
-                                                            btnClass += "bg-emerald-500 text-white border-emerald-600 shadow-md transform scale-[1.01] z-10";
+                                                            btnClass += "bg-emerald-500 text-white border-emerald-600 shadow-md transform scale-[1.02] z-10";
                                                         } else if (opt === answerState.selected && !isCorrect) {
-                                                            // Modified: Darker red background and border for incorrect answers
-                                                            btnClass += "bg-red-100 text-red-800 border-red-400 shadow-sm z-10";
+                                                            btnClass += "bg-red-50 text-red-700 border-red-200 opacity-80";
                                                         } else {
                                                             btnClass += "bg-stone-50 text-stone-400 border-stone-100 opacity-50";
                                                         }
@@ -969,37 +901,21 @@
                                                             className={btnClass}
                                                         >
                                                             <div className="flex items-center">
-                                                                <span className="mr-3 opacity-60 font-mono w-6">{String.fromCharCode(65 + i)}.</span>
+                                                                <span className="mr-2 opacity-60 font-mono">{String.fromCharCode(65 + i)}.</span>
                                                                 {opt}
-                                                                {isAnswered && opt === q.answer && <CheckCircle className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-white" />}
-                                                                {isAnswered && opt === answerState.selected && !isCorrect && <XCircle className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-red-500" />}
+                                                                {isAnswered && opt === q.answer && <CheckCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-white" />}
+                                                                {isAnswered && opt === answerState.selected && !isCorrect && <XCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-red-500" />}
                                                             </div>
                                                         </button>
                                                     );
                                                 })}
                                             </div>
                                             
-                                            {/* Updated Instant Explanation with Warm Yellow Theme */}
-                                            {isAnswered && (
-                                                <div className="mt-6 p-5 bg-amber-50 rounded-xl text-amber-900 border border-amber-200 animate-fade-in relative overflow-hidden">
-                                                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
-                                                    <div className="flex items-center mb-3">
-                                                        {isCorrect ? (
-                                                            <div className="flex items-center text-emerald-600 font-bold bg-white px-3 py-1 rounded-full shadow-sm text-sm border border-emerald-100">
-                                                                <CheckCircle className="w-4 h-4 mr-2" /> 答對了
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex items-center text-red-600 font-bold bg-white px-3 py-1 rounded-full shadow-sm text-sm border border-red-100">
-                                                                <AlertCircle className="w-4 h-4 mr-2" /> 答錯了
-                                                            </div>
-                                                        )}
-                                                        <span className="ml-3 text-amber-700/60 text-xs font-bold uppercase tracking-wider">Explanation</span>
-                                                    </div>
-                                                    
-                                                    <div className="text-base leading-relaxed text-stone-800">
-                                                        <span className="font-bold text-amber-700 mr-2">解析：</span>
-                                                        {q.explanation}
-                                                    </div>
+                                            {/* Instant Feedback Message */}
+                                            {isAnswered && !isCorrect && (
+                                                <div className="mt-4 p-3 bg-red-50 rounded-lg text-sm text-red-800 flex items-center animate-fade-in border border-red-100">
+                                                    <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                                                    <span>答錯了！已自動加入錯題本。正確答案是 <strong>{q.answer}</strong></span>
                                                 </div>
                                             )}
                                         </div>
@@ -1507,16 +1423,7 @@
                                 <h3 className="text-xl md:text-2xl font-bold text-stone-800 mb-8 leading-relaxed">{currentQ.question}</h3>
                                 <div className="space-y-3">{currentQ.options.map((opt, i) => {
                                     let statusClass = "border-stone-100 hover:border-stone-300 text-stone-700";
-                                    if (isAnswered) { 
-                                        if (opt === currentQ.answer) { 
-                                            statusClass = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold"; 
-                                        } else if (opt === answers[currentQ.id]) { 
-                                            // Modified: Darker red background and border for Full Quiz as well
-                                            statusClass = "border-red-600 bg-red-100 text-red-900 font-bold shadow-sm"; 
-                                        } else { 
-                                            statusClass = "border-stone-100 opacity-50"; 
-                                        } 
-                                    }
+                                    if (isAnswered) { if (opt === currentQ.answer) { statusClass = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold"; } else if (opt === answers[currentQ.id]) { statusClass = "border-red-500 bg-red-50 text-red-900"; } else { statusClass = "border-stone-100 opacity-50"; } }
                                     return (<button key={i} onClick={() => handleAnswer(opt)} disabled={isAnswered} className={`w-full text-left p-5 rounded-xl border-2 transition relative text-lg font-medium ${statusClass}`}><span className="inline-block w-6 font-bold text-stone-400 mr-2">{String.fromCharCode(65 + i)}.</span>{opt}{isAnswered && opt === currentQ.answer && <CheckCircle className="w-5 h-5 text-emerald-600 absolute right-4 top-1/2 -translate-y-1/2" />}{isAnswered && opt === answers[currentQ.id] && opt !== currentQ.answer && <XCircle className="w-5 h-5 text-red-600 absolute right-4 top-1/2 -translate-y-1/2" />}</button>);
                                 })}</div>
                             </div>
