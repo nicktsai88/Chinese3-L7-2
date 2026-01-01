@@ -73,13 +73,13 @@
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
-        import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+        import React, { useState, useEffect, useRef } from 'react';
         import { createRoot } from 'react-dom/client';
         import { 
             BookOpen, PenTool, History, Heart, AlertCircle, CheckCircle, XCircle, 
             ChevronRight, LogOut, User, ArrowLeft, Zap, Volume2, Home, LayoutGrid, 
             Layers, ChevronDown, ChevronUp, Loader2, Sparkles, Image as ImageIcon, Download, ImageOff,
-            Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw, Award, AlertTriangle, RefreshCw
+            Gavel, Scale, FileText, List, Rocket, Trophy, RotateCcw, Award
         } from 'lucide-react';
 
         // --- LocalStorage Database Helper ---
@@ -651,11 +651,6 @@
             const [favorites, setFavorites] = useState(new Set());
             const [score, setScore] = useState(0);
             const [showSummary, setShowSummary] = useState(false);
-            
-            // New State for Resume & Confirmation Dialogs
-            const [activeModal, setActiveModal] = useState('none'); // 'none', 'resume_ask', 'restart_confirm'
-            const [pendingSavedData, setPendingSavedData] = useState(null);
-            const questionRefs = useRef({});
 
             // Load favorites on mount
             useEffect(() => {
@@ -667,8 +662,14 @@
             useEffect(() => {
                 const savedData = LocalDB.getQuickQuizProgress();
                 if (savedData && !selectedCategory) {
-                    setPendingSavedData(savedData);
-                    setActiveModal('resume_ask');
+                    if (window.confirm("是否繼續上次未完成的測驗？")) {
+                        setSelectedCategory(savedData.category);
+                        setQuestions(savedData.questions);
+                        setAnswers(savedData.answers);
+                        setScore(savedData.score);
+                    } else {
+                        LocalDB.clearQuickQuizProgress();
+                    }
                 }
             }, []);
 
@@ -700,48 +701,6 @@
                 filtered = filtered.sort(() => 0.5 - Math.random());
                 setQuestions(filtered);
             }, [selectedCategory]);
-
-            // Scroll to last answered function
-            const scrollToLastInteraction = (restoredAnswers) => {
-                setTimeout(() => {
-                    const answeredIds = Object.keys(restoredAnswers);
-                    if (answeredIds.length > 0) {
-                        // Find the last ID in the answers object (not necessarily chronological, but best guess)
-                        // Or better: Find the last question index that is answered
-                        // Actually, let's scroll to the last answered one to show context
-                        const lastAnsweredId = answeredIds[answeredIds.length - 1]; 
-                        if (questionRefs.current[lastAnsweredId]) {
-                            questionRefs.current[lastAnsweredId].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    }
-                }, 300); // Small delay to allow render
-            };
-
-            const handleResume = () => {
-                if (pendingSavedData) {
-                    setSelectedCategory(pendingSavedData.category);
-                    setQuestions(pendingSavedData.questions);
-                    setAnswers(pendingSavedData.answers);
-                    setScore(pendingSavedData.score);
-                    setActiveModal('none');
-                    scrollToLastInteraction(pendingSavedData.answers);
-                }
-            };
-
-            const handleRestartRequest = () => {
-                setActiveModal('restart_confirm');
-            };
-
-            const handleRestartConfirm = () => {
-                LocalDB.clearQuickQuizProgress();
-                setPendingSavedData(null);
-                setActiveModal('none');
-            };
-
-            const handleCancelRestart = () => {
-                setActiveModal('resume_ask');
-            };
-
 
             const toggleFavorite = (qId) => {
                 const newFavs = LocalDB.toggleFavorite(qId);
@@ -778,49 +737,6 @@
                 }
             };
 
-            // Modal Renderers
-            const ResumeModal = () => (
-                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full">
-                        <div className="flex flex-col items-center mb-4">
-                            <div className="bg-purple-100 p-3 rounded-full mb-3">
-                                <RotateCcw className="w-8 h-8 text-purple-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-stone-800">發現未完成的測驗</h3>
-                            <p className="text-stone-500 text-center mt-2 text-sm">系統記錄到您上次有未完成的快速測驗。是否要繼續作答？</p>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <button onClick={handleResume} className="w-full py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-200">
-                                繼續測驗
-                            </button>
-                            <button onClick={handleRestartRequest} className="w-full py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition">
-                                重新開始
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-
-            const RestartConfirmModal = () => (
-                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border-t-4 border-red-500">
-                        <div className="flex flex-col items-center mb-4">
-                            <AlertTriangle className="w-12 h-12 text-red-500 mb-2" />
-                            <h3 className="text-xl font-bold text-stone-800">確定要重新開始嗎？</h3>
-                            <p className="text-stone-500 text-center mt-2 text-sm">如果您選擇重新開始，之前的測驗進度將會<span className="text-red-500 font-bold">完全遺失</span>。</p>
-                        </div>
-                        <div className="flex gap-3">
-                            <button onClick={handleCancelRestart} className="flex-1 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition">
-                                取消
-                            </button>
-                            <button onClick={handleRestartConfirm} className="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition shadow-lg shadow-red-200">
-                                確定重新開始
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-
             // Category Selection Screen
             if (!selectedCategory) {
                 const categories = [
@@ -833,9 +749,6 @@
                 ];
                 return (
                     <div className="h-full flex flex-col bg-stone-50">
-                        {activeModal === 'resume_ask' && <ResumeModal />}
-                        {activeModal === 'restart_confirm' && <RestartConfirmModal />}
-                        
                         <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center sticky top-0 z-10">
                             <button onClick={onBack} className="flex items-center text-stone-600 hover:text-purple-600 mr-4">
                                 <ArrowLeft className="w-5 h-5 mr-1" /> 返回
@@ -954,11 +867,7 @@
                                 const isCorrect = answerState?.isCorrect;
                                 
                                 return (
-                                    <div 
-                                        key={q.id} 
-                                        ref={el => questionRefs.current[q.id] = el}
-                                        className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 overflow-hidden ${isAnswered ? (isCorrect ? 'border-emerald-100' : 'border-red-100') : 'border-transparent'}`}
-                                    >
+                                    <div key={q.id} className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 overflow-hidden ${isAnswered ? (isCorrect ? 'border-emerald-100' : 'border-red-100') : 'border-transparent'}`}>
                                         <div className="p-5">
                                             <div className="flex justify-between items-start mb-4">
                                                 <div className="flex items-center space-x-2">
@@ -1057,8 +966,20 @@
 
             // Helper to render image or placeholder with Generate Button
             const renderImageSection = (src, alt) => {
-                // Image display function disabled per user request
-                return null;
+                // If no image, return nothing (or placeholder if desired, but user asked for local images)
+                if (!src) return null;
+
+                // Simply render the image from local path
+                return (
+                    <div className="mt-4 border-t border-dashed border-stone-200 pt-4 flex flex-col gap-3">
+                        <img 
+                            src={src} 
+                            alt={alt} 
+                            className="w-full h-auto rounded-lg shadow-sm" 
+                            onError={(e) => e.target.style.display = 'none'} // Hide if missing
+                        />
+                    </div>
+                );
             };
 
             return (
